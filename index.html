@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f1ebde">
+  <meta name="description" content="Um varal de fotografias e versos. Mar, terra e afetos nas fotopoesias de Marcello Tubarão, em um encontro com o macramê.">
+  <meta property="og:title" content="Fotocordel — entre o sal e a palavra">
+  <meta property="og:description" content="Fotografias, versos e fios. Entre na exposição de fotopoesias de Marcello Tubarão.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://phellipe.github.io/fotocordel/">
+  <meta property="og:image" content="https://phellipe.github.io/fotocordel/assets/og-cover.jpg">
+  <title>Fotocordel — entre o sal e a palavra</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/fraunces.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script src="gallery-data.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="sound.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#acervo">Pular para as fotografias</a>
+  <header class="site-header" id="inicio">
+    <a class="brand" href="#inicio" aria-label="Fotocordel, início">foto<span>cordel</span><span class="brand-dot">.</span></a>
+    <nav aria-label="Navegação principal">
+      <a href="#acervo">O varal</a>
+      <a href="#territorio">O território</a>
+      <a href="#trama">A trama</a>
+    </nav>
+    <a class="header-note" href="#paisagem-sonora"><span class="sound-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></span> Tem som de mar</a>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-topline"><span>FOTOGRAFIA, POESIA & FIO</span><span>DO LITORAL AO SERTÃO · RN</span></div>
+      <div class="hero-layout">
+        <div class="hero-copy">
+          <p class="eyebrow">Um varal de coisas sentidas</p>
+          <h1 id="hero-title">Entre o sal<br>e a <span>palavra.</span></h1>
+          <p class="hero-description">O mar, a terra, a gente.<br>Fotografias que guardam instantes.<br>Versos que não deixam passar.</p>
+          <a class="text-link hero-cta" href="#acervo">Passear pelo varal <span aria-hidden="true">↗</span></a>
+          <div class="author-line"><span class="little-sun" aria-hidden="true">☼</span><p>Fotopoesias de<br><strong>Marcello Tubarão</strong></p></div>
+        </div>
+        <div class="hero-art">
+          <div class="rope" aria-hidden="true"></div>
+          <figure class="hero-photo hanging-photo">
+            <button type="button" class="photo-open" data-photo="10-ano-novo" aria-label="Ampliar a fotopoesia Ano novo">
+              <img src="assets/photos/10-ano-novo-full.webp" width="1024" height="640" alt="Jangada e silhuetas ao pôr do sol, refletidas na areia molhada, com versos de Marcello Tubarão." fetchpriority="high">
+              <span class="photo-open-label">Olhar de perto <span aria-hidden="true">↗</span></span>
+            </button>
+            <figcaption><span>01 / UM INSTANTE QUE FICA</span><span>Ponta Negra, Natal — RN</span></figcaption>
+          </figure>
+          <div class="hero-under"><span class="hand-note">Devagar também<br>é um jeito de chegar.</span><span class="sun-stamp" aria-hidden="true">FEITO DE<br><b>sal & sol</b><br>VERSO & AFETO</span></div>
+        </div>
+      </div>
+      <div class="hero-bottom"><span>EXPOSIÇÃO DIGITAL · 17 FOTOPOESIAS</span><a href="#acervo">Puxe o fio <span aria-hidden="true">↓</span></a><span>PARA OLHAR SEM PRESSA</span></div>
+    </section>
+
+    <section class="intro section-pad" id="territorio" aria-labelledby="territorio-title">
+      <div class="section-number">01 — O TERRITÓRIO</div>
+      <div class="intro-layout">
+        <h2 id="territorio-title">Tem um pouco<br>de <em>mundo</em><br>em cada verso.</h2>
+        <div class="intro-text"><p>Uma jangada voltando. O céu que muda de cor. Uma flor aberta, uma risada, um encontro. Nas fotopoesias de Marcello Tubarão, o extraordinário mora perto.</p><p>Este varal aproxima a beira do mar, a terra e os afetos. A fotografia encontra a palavra; o cordel encontra a tela. E um fio de macramê costura a passagem entre o que a mão toca e o que o olhar descobre.</p><a class="text-link" href="#trama">Conheça essa trama <span aria-hidden="true">↗</span></a></div>
+      </div>
+      <div class="territory-strip" aria-hidden="true"><span>SAL</span><i>✳</i><span>TERRA</span><i>✳</i><span>VENTO</span><i>✳</i><span>GENTE</span><i>✳</i><span>POESIA</span></div>
+    </section>
+
+    <section class="collection section-pad" id="acervo" aria-labelledby="acervo-title">
+      <div class="collection-heading"><div><p class="section-number">02 — O VARAL</p><h2 id="acervo-title">Pendurados<br>na <em>memória.</em></h2></div><p>Cada fotografia, um pequeno mundo.<br>Toque para ampliar e ler os versos.</p></div>
+      <div class="gallery-toolbar"><div class="filters" role="group" aria-label="Filtrar fotopoesias"><button type="button" data-filter="todos" aria-pressed="true">Todo o varal <span>17</span></button><button type="button" data-filter="mar" aria-pressed="false">Mar & horizonte</button><button type="button" data-filter="terra" aria-pressed="false">Terra & cotidiano</button><button type="button" data-filter="afetos" aria-pressed="false">Afetos & encontros</button></div><p id="gallery-count" aria-live="polite">17 fotopoesias</p></div>
+      <div class="gallery" id="gallery"></div>
+      <noscript><p>Ative o JavaScript para navegar pelo varal, ler as transcrições e ouvir a paisagem. Você também pode <a href="assets/photos/10-ano-novo-full.webp">abrir a fotografia de Ano novo</a>.</p></noscript>
+      <p class="gallery-footnote"><span aria-hidden="true">↗</span> Fotografias inteiras. Versos no seu lugar. Um tempo só seu.</p>
+    </section>
+
+    <section class="sound-section section-pad" id="paisagem-sonora" aria-labelledby="sound-title">
+      <div class="sound-art" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="sound-copy"><p class="section-number">UMA PAUSA PARA ESCUTAR</p><h2 id="sound-title">Feche os olhos.<br><em>O lugar continua.</em></h2><p>Um sopro de vento. O vai e vem das ondas.<br>Escolha uma paisagem para acompanhar a visita.</p><div class="sound-controls"><button type="button" id="sound-toggle" aria-pressed="false"><span class="sound-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span data-sound-label>Ouvir a paisagem</span></button><label class="scene-label"><span class="sr-only">Paisagem sonora</span><select id="sound-scene"><option value="mar">Ondas do mar</option><option value="vento">Vento na terra</option></select></label></div><label class="volume-label" for="sound-volume">Volume <input id="sound-volume" type="range" min="0" max="100" value="30"></label><p id="sound-status" class="sound-status" role="status">O som só começa quando você quiser.</p><small>Paisagens sonoras criadas digitalmente.</small></div>
+    </section>
+
+    <section class="thread-section section-pad" id="trama" aria-labelledby="trama-title">
+      <figure class="macrame-figure"><img src="assets/photos/macrame.webp" width="900" height="900" alt="Estudo visual de um painel de macramê cru e azul, com franjas e uma composição inspirada em QR code." loading="lazy"><figcaption>MACRAMÊ · ESTUDO VISUAL DO PROJETO</figcaption></figure>
+      <div class="thread-copy"><p class="section-number">03 — A TRAMA</p><h2 id="trama-title">Um fio puxa<br><em>outro mundo.</em></h2><p>Na peça, o nó. Na fotografia, o instante. No cordel, a palavra. O macramê é o começo deste caminho: um convite feito à mão para entrar e demorar um pouco.</p><p>O QR code na peça física abre esta exposição. Assim, os fios seguem pela tela e chegam a outras paisagens.</p><div class="qr-block"><img src="assets/qr/fotocordel-qr.svg" width="124" height="124" alt="QR code funcional para abrir o site Fotocordel" loading="lazy"><div><h3>Leve esse varal com você.</h3><p>Este é o código que abre a exposição.</p><a href="assets/qr/fotocordel-qr.png" class="text-link" download="fotocordel-qr.png">Baixar QR para impressão <span aria-hidden="true">↓</span></a></div></div><p class="concept-note">A trama azul ao lado é uma referência artística. Para acessar o site ou produzir a peça, use o QR code acima.</p></div>
+    </section>
+
+    <section class="closing section-pad" aria-label="Verso de encerramento"><span aria-hidden="true">✳</span><blockquote>“Que essa luz lhe dê força<br>enchendo seu coração”</blockquote><p>Marcello Tubarão · <button type="button" class="inline-button" data-photo="12-jangada">Ver a fotopoesia ↗</button></p></section>
+  </main>
+  <footer><a class="brand" href="#inicio">foto<span>cordel</span><span class="brand-dot">.</span></a><p>Fotografia, palavra e pertencimento.<br>Fotopoesias de Marcello Tubarão.</p><a class="text-link" href="#inicio">Voltar ao começo <span aria-hidden="true">↑</span></a></footer>
+
+  <dialog id="photo-dialog" aria-labelledby="viewer-title">
+    <div class="viewer-header"><span id="viewer-counter"></span><span id="viewer-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></span><button type="button" id="viewer-close" aria-label="Fechar fotografia">Fechar <span aria-hidden="true">×</span></button></div>
+    <div class="viewer-layout"><div class="viewer-image-wrap" id="viewer-image-wrap"><img id="viewer-image" alt=""></div><div class="viewer-info"><p class="section-number" id="viewer-category"></p><h2 id="viewer-title"></h2><p id="viewer-poem" class="viewer-poem"></p><p id="viewer-credit"></p><button type="button" id="viewer-zoom" class="text-link" aria-pressed="false">Ampliar imagem <span aria-hidden="true">↗</span></button></div></div>
+    <div class="viewer-bottom"><button type="button" id="viewer-prev" aria-label="Fotopoesia anterior">← <span>Anterior</span></button><p>Um instante de cada vez.</p><button type="button" id="viewer-next" aria-label="Próxima fotopoesia"><span>Próxima</span> →</button></div>
+  </dialog>
+</body>
+</html>
