@@ -1,36 +1,52 @@
 # Fotocordel
 
-Exposição estática de fotopoesias de Marcello Tubarão: mar, cotidiano, afetos e um encontro com o macramê.
+Exposição estática de 17 fotopoesias de Marcello Tubarão, com **duas versões preservadas para comparação**.
 
-Site: https://phellipe.github.io/fotocordel/
+| Versão | Endereço | Direção |
+| --- | --- | --- |
+| V1 — original | [Abrir V1](https://phellipe.eti.br/fotocordel/) | “Entre o sal e a palavra”: composição editorial, azul, papel claro e fotografia pendurada no varal. |
+| V2 — cordel | [Abrir V2](https://phellipe.eti.br/fotocordel/v2/) | “O mar e o sertão. Na palma da sua mão.”: folheto com moldura dupla, Rye e xilogravura. |
 
-## Visualizar localmente
+[Repositório](https://github.com/phellipe/fotocordel). A V1 mantém a base visual e o comportamento da versão original (`0f21bf7`); a V2 continua disponível em `/v2/`.
 
-Execute `python -m http.server 4173 --bind 127.0.0.1` na pasta do projeto e abra http://127.0.0.1:4173/.
+## Executar e publicar
 
-Não há instalação, build, backend, serviços pagos, cookies ou dependências externas durante a visita. HTML, CSS, JavaScript, fontes, imagens e QR são servidos pelo próprio site. GitHub Pages publica a raiz da branch `main`; `.nojekyll` dispensa o Jekyll.
+Na pasta do projeto, execute `python -m http.server 4173 --bind 127.0.0.1` e abra [V1 local](http://127.0.0.1:4173/) ou [V2 local](http://127.0.0.1:4173/v2/).
 
-## Conteúdo
+Não há instalação para visualizar, build ou backend. HTML, CSS, JavaScript, fontes, imagens e QR são locais. O GitHub Pages publica a raiz de `main` após commit e push; `.nojekyll` dispensa o Jekyll. O endereço `https://phellipe.github.io/fotocordel/` redireciona para o domínio público acima.
 
-- `gallery-data.js`: obras, títulos editoriais, descrições acessíveis e transcrições dos versos. Os títulos de navegação não substituem o título/assinatura na imagem.
-- `assets/photos/`: miniaturas e imagens completas em WebP. Os enquadramentos e textos das obras foram preservados.
-- `images/`: originais locais, ignorados pelo Git e não publicados.
-- `sound.js`: paisagens sintéticas de ondas e vento, feitas com Web Audio. Só iniciam por ação do visitante, com volume ajustável; pausam quando a aba deixa de estar visível. Não são gravações dos locais fotografados.
-- `assets/qr/`: QR funcional em PNG (impressão) e SVG (vetorial), apontando para a URL pública do projeto.
-- `assets/photos/macrame.webp`: estudo visual fornecido do projeto em macramê. O desenho da trama não é um QR funcional verificado. Para produzir uma peça escaneável, use o código funcional como matriz, mantendo os módulos e a margem branca, e teste o objeto físico antes de reproduzi-lo.
+## Experiência das versões
 
-## Atualizar as fotografias
+- Ambas preservam fotografias e versos completos, filtros por mar, terra e afetos e leitor com transcrição, créditos, zoom e navegação anterior/próxima. As setas navegam; Escape fecha.
+- **V1:** galeria original; som desligado inicialmente, ativado pelo visitante na seção sonora.
+- **V2:** “Folhas grandes” e “Visão geral”; mar habilitado por padrão, com tentativa de autoplay e liberação na primeira interação válida quando o navegador bloquear. Há controle flutuante e controle dentro do leitor.
+- Na V2, a escolha de silenciar é salva em `localStorage` (`fotocordel.sound.muted`). Paisagem e volume reiniciam em mar e 22%. As duas versões oferecem volume, vento e pausa em segundo plano. São ambientes sintetizados com Web Audio, não gravações dos locais.
 
-Instale Pillow (`python -m pip install Pillow`) e execute `python scripts/prepare-images.py` para reproduzir os derivados a partir dos originais. Atualize `gallery-data.js` quando alterar o acervo. As versões completas são abertas somente quando o visitante seleciona a obra. Transcrições devem ser revisadas junto com o autor.
+## Arquivos e manutenção
 
-O QR pode ser recriado com `python -m pip install qrcode Pillow` e `python scripts/create-qr.py`. Se mudar o endereço público, atualize também os metadados em `index.html`.
+| Arquivo | Função |
+| --- | --- |
+| `gallery-data.js` | Obras, títulos de navegação, descrições, transcrições e créditos. Os títulos editoriais não substituem os das imagens. |
+| `index.html`, `styles.css`, `app.js`, `sound.js` | Página e comportamento da V1 original. |
+| `v2/` | Página, estilos e comportamento da V2 de cordel; usa os recursos compartilhados da raiz. |
+| `assets/photos/` | Miniaturas e versões completas em WebP; originais locais em `images/`, ignorados pelo Git. |
+| `assets/art/` | Arte de abertura, original PNG e documentação de geração. |
+| `assets/qr/` | `fotocordel-qr.png/.svg` abre a V1; `fotocordel-v2-qr.png/.svg` abre a V2. |
+| `DESIGN.md` / `PRODUCT.md` | Sistema visual atual / escopo e conteúdo do produto. |
 
-## Publicar alterações
+Para atualizar as imagens: instale Pillow (`python -m pip install Pillow`), execute `python scripts/prepare-images.py` e ajuste `gallery-data.js`. A galeria carrega miniaturas; o leitor busca a versão completa, e a obra em destaque já usa a versão completa. Revise transcrições com o autor.
 
-Depois de revisar as mudanças, faça commit e push para `main`. O GitHub Pages publica automaticamente.
+Para recriar os QRs: `python -m pip install qrcode Pillow` e `python scripts/create-qr.py`. O padrão gera ambos; `--version v1`, `--version v2` ou `--version both` seleciona a saída.
 
-## Direção de arte
+- **QR original:** `fotocordel-qr.png/.svg` codifica `https://phellipe.github.io/fotocordel/`, que redireciona à V1. Seu destino foi preservado.
+- **QR da V2:** `fotocordel-v2-qr.png/.svg` codifica `https://phellipe.eti.br/fotocordel/v2/`.
 
-Azul do fio de macramê, papel cru, acento de barro; composição editorial, fotografias sem recorte e um varal na abertura. Referências consultadas: [Skillry — Cobalt Serif](https://skillry.dev/skills/bs-cobalt-serif-freelancer-site), [Impeccable](https://impeccable.style/slop/) e [Refero — Intercom](https://styles.refero.design/style/12255b63-e506-4bc1-a4cd-d05487de32f3). Sem templates pagos, instalação de skills externas ou acesso à conta Skillry.
+A referência azul de macramê é um estudo visual, não um código escaneável verificado; para a peça física, preserve módulos e margem da matriz funcional e teste a leitura.
 
-Fotografias e poemas mantêm os créditos presentes nas obras. O acervo não foi relicenciado. Fontes Fraunces, Cormorant Garamond e DM Sans: SIL Open Font License; licenças em `assets/fonts/`.
+## Arte, fontes e referências
+
+A xilogravura da **V2** foi gerada com a ferramenta nativa `image_gen`; prompt e procedência em `assets/art/README.md`. É uma interpretação ilustrada, sem alterar as fotografias. A **V1** usa Fraunces, Cormorant e DM Sans; a **V2** usa Rye, DM Sans e Georgia do sistema. Licenças das fontes distribuídas em `assets/fonts/`.
+
+Referências visuais consultadas na sessão autenticada do Skillry: [Allegorical Engraving Cover](https://skillry.dev/skills/bs-allegorical-engraving-cover), [Collage Creative Portfolio](https://skillry.dev/skills/bs-collage-creative-portfolio) e [Cut-Paper Collective](https://skillry.dev/skills/bs-cutpaper-collective-site). Também foi consultado o [guia público do Impeccable](https://impeccable.style/slop/). São referências de direção de arte; nenhum pacote dessas referências foi instalado ou incorporado.
+
+Fotografias e poemas conservam os créditos presentes nas obras. O acervo não foi relicenciado.
