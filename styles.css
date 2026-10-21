@@ -25,3 +25,6 @@ h2 em{font-family:var(--display);font-weight:700;font-style:normal;letter-spacin
 
 @media(max-width:680px){.intro-layout h2 br:nth-of-type(2){display:initial}}
 
+
+img{height:auto}
+
