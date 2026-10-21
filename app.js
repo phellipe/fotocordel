@@ -30,6 +30,15 @@
     if (text) node.textContent = text;
     return node;
   }
+  function icon(name) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.classList.add('icon');
+    svg.setAttribute('aria-hidden', 'true');
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute('href', `#icon-${name}`);
+    svg.append(use);
+    return svg;
+  }
   ordered.forEach((photo, index) => {
     const figure = element('figure', 'gallery-item');
     figure.dataset.category = photo.category;
@@ -44,13 +53,26 @@
     img.height = photo.height;
     img.loading = 'lazy';
     img.decoding = 'async';
-    button.append(img, element('span', 'photo-open-label', 'Olhar de perto ↗'));
+    const prompt = element('span', 'photo-open-label', 'Ler a fotopoesia');
+    prompt.append(icon('expand'));
+    button.append(img, prompt);
     const caption = element('figcaption');
     const info = element('div');
     info.append(element('h3', '', photo.title), element('p', 'work-category', categories[photo.category]));
-    caption.append(info, element('span', 'work-number', String(index + 1).padStart(2, '0')));
-    figure.append(button, caption);
+    const openMark = element('span', 'work-number');
+    openMark.append(icon('expand'));
+    caption.append(info, openMark);
+    const leafHeading = element('div', 'leaf-heading');
+    leafHeading.append(element('span', '', 'Fotocordel'), element('span', '', `Folha ${String(index + 1).padStart(2, '0')}`));
+    figure.append(leafHeading, button, caption);
     gallery.append(figure);
+  });
+
+  document.querySelectorAll('[data-view]').forEach(button => {
+    button.addEventListener('click', () => {
+      gallery.classList.toggle('overview', button.dataset.view === 'mosaico');
+      document.querySelectorAll('[data-view]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+    });
   });
 
   document.querySelectorAll('[data-filter]').forEach(button => {
@@ -66,7 +88,7 @@
   function resetZoom() {
     imageWrap.classList.remove('zoomed');
     zoomButton.setAttribute('aria-pressed', 'false');
-    zoomButton.textContent = 'Ampliar imagem ↗';
+    zoomButton.textContent = 'Ampliar imagem';
     imageWrap.scrollTo(0,0);
   }
   function showPhoto(index) {
@@ -120,6 +142,6 @@
   zoomButton.addEventListener('click', () => {
     const zoomed = imageWrap.classList.toggle('zoomed');
     zoomButton.setAttribute('aria-pressed', String(zoomed));
-    zoomButton.textContent = zoomed ? 'Ver imagem inteira ↙' : 'Ampliar imagem ↗';
+    zoomButton.textContent = zoomed ? 'Ver imagem inteira' : 'Ampliar imagem';
   });
 })();
