@@ -6,4 +6,3 @@ STRIPE_MODE="test"
 SALES_ENABLED="false"
 SITE_URL="http://127.0.0.1:4173/"
 ALLOWED_ORIGINS="http://127.0.0.1:4173,http://localhost:4173"
-
