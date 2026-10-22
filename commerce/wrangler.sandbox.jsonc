@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fotocordel-commerce-test",
+  "account_id": "f5a4c3b8247a292f29ffd80323676623",
+  "main": "src/sandbox.js",
+  "compatibility_date": "2026-10-22",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "vars": {
+    "STRIPE_MODE": "test",
+    "SALES_ENABLED": "true",
+    "SITE_URL": "https://fotocordel.com.br/",
+    "ALLOWED_ORIGINS": "https://fotocordel.com.br,https://www.fotocordel.com.br,https://phellipe.eti.br"
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "fotocordel-commerce-test",
+    "database_id": "7d9e9efd-eb8a-4e98-86d1-f9b5859d5892",
+    "migrations_dir": "migrations"
+  }],
+  "assets": {
+    "directory": "../.commerce-local/files",
+    "binding": "PRIVATE_FILES",
+    "run_worker_first": true,
+    "html_handling": "none",
+    "not_found_handling": "none"
+  }
+}

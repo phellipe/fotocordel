@@ -77,7 +77,7 @@ export function fixture(options = {}) {
     },
     ...options.env,
   };
-  const worker = createWorker({ catalog: options.catalog || [PHOTO], stripeFactory: () => stripe, now: () => clock });
+  const worker = (options.workerFactory || createWorker)({ catalog: options.catalog || [PHOTO], stripeFactory: () => stripe, now: () => clock });
   const api = (path, init = {}) => worker.fetch(new Request(`https://commerce.test${path}`, init), env);
   const authorized = (path, method = 'GET', token = BUYER_TOKEN) => api(path, { method, headers: { Authorization: `Bearer ${token}` } });
   const checkout = (overrides = {}) => api('/checkout', {

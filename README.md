@@ -1,25 +1,27 @@
 # Fotocordel
 
-Exposição estática de 17 fotopoesias de Marcello Tubarão, com **duas versões preservadas para comparação**.
+Exposição estática de 17 fotopoesias de Marcello Tubarão. **A V1 foi aprovada e é a única versão apresentada ao público.**
 
 | Versão | Endereço | Direção |
 | --- | --- | --- |
-| V1 — original | [Abrir V1](https://phellipe.eti.br/fotocordel/) | “Entre o sal e a palavra”: composição editorial, azul, papel claro e fotografia pendurada no varal. |
-| V2 — cordel | [Abrir V2](https://phellipe.eti.br/fotocordel/v2/) | “O mar e o sertão. Na palma da sua mão.”: folheto com moldura dupla, Rye e xilogravura. |
+| V1 — aprovada | [Domínio próprio](https://fotocordel.com.br/) | “Entre o sal e a palavra”: composição editorial, azul, papel claro e fotografia pendurada no varal. |
+| V2 — arquivada | Fontes preservadas em `v2/` | Estudo de folheto com xilogravura, oculto da navegação e marcado `noindex, nofollow`. |
 
-[Repositório](https://github.com/phellipe/fotocordel). A V1 mantém a base visual e o comportamento da versão original (`0f21bf7`); a V2 continua disponível em `/v2/`.
+[Repositório](https://github.com/phellipe/fotocordel). A V1 mantém a base visual e o comportamento da versão original (`0f21bf7`). A V2 não foi apagada e sua URL direta ainda pode abrir; ocultação e `noindex` não são controle de acesso. Não divulgar a versão arquivada nem seu QR.
+
+**Domínio próprio:** `fotocordel.com.br` está registrado e configurado no `CNAME` do GitHub Pages. Metadados e novo QR da V1 apontam a esse endereço. A transição de DNS e a validação de HTTPS ainda precisam ser concluídas antes de considerar a migração pronta. Somente a V1 aprovada será apresentada; os retornos do pagamento e as origens da API devem acompanhar o domínio.
 
 ## Executar e publicar
 
-Na pasta do projeto, execute `python scripts/serve-preview.py` e abra [V1 local](http://127.0.0.1:4173/) ou [V2 local](http://127.0.0.1:4173/v2/).
+Na pasta do projeto, execute `python scripts/serve-preview.py` e abra [a prévia local aprovada](http://127.0.0.1:4173/). A pasta `v2/` permanece disponível apenas como referência de manutenção.
 
-As galerias não exigem instalação, build ou backend para visualização. HTML, CSS, JavaScript, fontes, imagens e QR são locais. A compra opcional usa o serviço separado descrito abaixo. O GitHub Pages publica a raiz de `main` após commit e push; `.nojekyll` dispensa o Jekyll. O endereço `https://phellipe.github.io/fotocordel/` redireciona para o domínio público acima.
+As galerias não exigem instalação, build ou backend para visualização. HTML, CSS, JavaScript, fontes, imagens e QR são locais. A compra opcional usa o serviço separado descrito abaixo. O GitHub Pages publica a raiz de `main` após commit e push; `.nojekyll` dispensa o Jekyll. O redirecionamento do antigo endereço `https://phellipe.github.io/fotocordel/` deve ser conferido após a propagação do novo domínio, inclusive para QR codes já distribuídos.
 
-## Experiência das versões
+## Experiência aprovada e estudo preservado
 
 - Ambas preservam fotografias e versos completos, filtros por mar, terra e afetos e leitor com transcrição, créditos, zoom e navegação anterior/próxima. As setas navegam; Escape fecha.
 - **V1:** galeria original; som desligado inicialmente, ativado pelo visitante na seção sonora.
-- **V2:** “Folhas grandes” e “Visão geral”; mar habilitado por padrão, com tentativa de autoplay e liberação na primeira interação válida quando o navegador bloquear. Há controle flutuante e controle dentro do leitor.
+- **V2 arquivada:** “Folhas grandes” e “Visão geral”; mar habilitado por padrão, com tentativa de autoplay e liberação na primeira interação válida quando o navegador bloquear. Há controle flutuante e controle dentro do leitor.
 - Na V2, a escolha de silenciar é salva em `localStorage` (`fotocordel.sound.muted`). Paisagem e volume reiniciam em mar e 22%. As duas versões oferecem volume, vento e pausa em segundo plano. São ambientes sintetizados com Web Audio, não gravações dos locais.
 
 ## Arquivos e manutenção
@@ -28,18 +30,18 @@ As galerias não exigem instalação, build ou backend para visualização. HTML
 | --- | --- |
 | `gallery-data.js` | Obras, títulos de navegação, descrições, transcrições e créditos. Os títulos editoriais não substituem os das imagens. |
 | `index.html`, `styles.css`, `app.js`, `sound.js` | Página e comportamento da V1 original. |
-| `v2/` | Página, estilos e comportamento da V2 de cordel; usa os recursos compartilhados da raiz. |
+| `v2/` | Estudo de cordel preservado, oculto da navegação, com compras desabilitadas nessa edição. |
 | `assets/photos/` | Miniaturas e versões completas em WebP; originais locais em `images/`, ignorados pelo Git. |
 | `assets/art/` | Arte de abertura, original PNG e documentação de geração. |
-| `assets/qr/` | `fotocordel-qr.png/.svg` abre a V1; `fotocordel-v2-qr.png/.svg` abre a V2. |
+| `assets/qr/` | `fotocordel-qr.png/.svg` abre a V1 aprovada; o QR da V2 é arquivo histórico, sem divulgação. |
 | `DESIGN.md` / `PRODUCT.md` | Sistema visual atual / escopo e conteúdo do produto. |
 
 Para atualizar as imagens: instale Pillow (`python -m pip install Pillow`), execute `python scripts/prepare-images.py` e ajuste `gallery-data.js`. A galeria carrega miniaturas; o leitor busca a versão completa, e a obra em destaque já usa a versão completa. Revise transcrições com o autor.
 
 Para recriar os QRs: `python -m pip install qrcode Pillow` e `python scripts/create-qr.py`. O padrão gera ambos; `--version v1`, `--version v2` ou `--version both` seleciona a saída.
 
-- **QR original:** `fotocordel-qr.png/.svg` codifica `https://phellipe.github.io/fotocordel/`, que redireciona à V1. Seu destino foi preservado.
-- **QR da V2:** `fotocordel-v2-qr.png/.svg` codifica `https://phellipe.eti.br/fotocordel/v2/`.
+- **QR atual da V1:** `fotocordel-qr.png/.svg` codifica `https://fotocordel.com.br/`. A troca deliberada do endereço usa `python scripts/create-qr.py --version v1 --replace-v1`; reproduções seguintes dispensam a opção de substituição.
+- **QR histórico da V2:** `fotocordel-v2-qr.png/.svg` conserva o destino antigo em `/v2/`; não distribuir.
 
 A referência azul de macramê é um estudo visual, não um código escaneável verificado; para a peça física, preserve módulos e margem da matriz funcional e teste a leitura.
 
@@ -53,7 +55,7 @@ Fotografias e poemas conservam os créditos presentes nas obras. O acervo não f
 
 ## Compra de arquivos digitais (integração preparada)
 
-As duas versões têm um módulo compartilhado de compra por **R$ 9,99**, com uso pessoal e comercial. O código do backend em `commerce/` usa Stripe Checkout, Cloudflare Workers, D1 e R2 privado; não exige VPS. A configuração pública `shop-config.js` permanece desabilitada até a hospedagem e a entrega final estarem prontas.
+A V1 tem um módulo de compra por **R$ 9,99**, com uso pessoal e comercial. A V2 arquivada não apresenta novas compras; recibos de pedidos antigos dessa edição continuam consultáveis, sempre com retorno ao varal da V1. O backend em `commerce/` usa Stripe Checkout, Cloudflare Workers, D1 e R2 privado; não exige VPS. `shop-config.js` está preparado com `enabled: true` para a API exclusiva de sandbox `https://fotocordel-commerce-test.fotocordel-commerce.workers.dev`. O checkout público depende também da liberação de vendas no backend; essa preparação não ativa pagamentos reais.
 
 Os 17 produtos e preços foram criados na área de teste da Stripe. Isso não ativa vendas reais. A conta consultada ainda exige ativação para pagamentos de produção; os arquivos atuais não constituem um acervo separado em alta resolução. Nenhum segredo ou original pago deve ser publicado no GitHub Pages.
 

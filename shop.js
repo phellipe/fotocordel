@@ -201,7 +201,7 @@
     if (!mount) return;
     mount.hidden = true;
     mount.replaceChildren();
-    if (!configured) return;
+    if (!configured || edition !== 'v1') return;
     let catalog;
     try { catalog = await getCatalog(); } catch { return; } // Offline catalogs never expose a broken buy button.
     if (selectedPhoto !== photoId) return;
@@ -212,6 +212,9 @@
     mount.append(node('p', 'shop-price', money.format(photo.amount / 100)));
     mount.append(node('p', 'shop-file', `Arquivo JPEG · ${dimensions(photo)}`));
     mount.append(node('p', 'shop-license', `${photo.license}. Licença não exclusiva, com o arquivo disponível para download após a confirmação do pagamento. O acesso ao download vale por 30 dias a partir da abertura do pedido.`));
+    if (catalog.mode === 'test') {
+      mount.append(node('p', 'shop-test-instructions', 'Use o cartão de teste 4242 4242 4242 4242, validade futura e CVC de 3 dígitos. Não informe um cartão real. Nenhuma cobrança será feita.'));
+    }
     const attempt = readStored(`attempt.${edition}.${photo.id}`);
     const completed = attempt?.orderId && readStored(`order.${attempt.orderId}`);
     if (completed?.confirmedPaid && completed.apiBase === apiBase && TOKEN.test(completed.buyerToken)) {
@@ -267,7 +270,7 @@
       return;
     }
     const backLink = document.querySelector('#shop-back-link');
-    backLink.href = new URL(order.edition === 'v2' ? 'v2/#acervo' : './#acervo', siteRoot).href;
+    backLink.href = new URL('./#acervo', siteRoot).href;
     testBadge.hidden = order.mode !== 'test';
     if (!configured || order.apiBase !== apiBase) {
       setState('Consulta indisponível', 'O serviço de compras não está conectado a esta versão do site.', 'Seu pedido não foi confirmado nesta página. Mantenha esta aba e tente novamente quando o serviço estiver disponível.');
@@ -318,7 +321,7 @@
           case 'paid':
             markPaid();
             if (data.downloadAvailable === true) {
-              setState(data.mode === 'test' ? 'Compra de teste confirmada' : 'Pagamento confirmado', 'Seu arquivo está pronto para baixar.', 'Baixe e guarde o arquivo. O acesso ao download vale por 30 dias a partir da abertura do pedido; a data limite aparece acima. Mantenha esta aba aberta, pois o acesso também depende desta sessão do navegador.');
+              setState(data.mode === 'test' ? 'Compra de teste confirmada' : 'Pagamento confirmado', data.mode === 'test' ? 'Seu teste foi concluído, sem cobrança real. O arquivo está pronto para baixar.' : 'Seu arquivo está pronto para baixar.', 'Baixe e guarde o arquivo. O acesso ao download vale por 30 dias a partir da abertura do pedido; a data limite aparece acima. Mantenha esta aba aberta, pois o acesso também depende desta sessão do navegador.');
               download.hidden = false;
               retry.hidden = true;
             } else {

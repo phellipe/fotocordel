@@ -7,8 +7,8 @@ Backend de venda e entrega de arquivos digitais por Stripe Checkout, Cloudflare 
 - Preço definido: **R$ 9,99 por obra**, pagamento único, licença de uso pessoal e comercial.
 - O catálogo contém 17 produtos/preços **de teste** já criados na Stripe. Os IDs de preço não são segredos.
 - `catalog.json` mantém `livePriceId: null` e `readyForLive: false` em todas as obras. O cadastro Stripe consultado ainda não estava habilitado para cobranças reais (`charges_enabled: false`).
-- Nenhum Worker, banco D1 ou bucket R2 remoto foi provisionado nesta entrega. Os IDs de banco em `wrangler.jsonc` são placeholders.
-- A configuração pública da loja começa desabilitada e sem endereço de API. O código preparado não significa que a loja esteja recebendo pagamentos.
+- O Worker de sandbox foi publicado em `https://fotocordel-commerce-test.fotocordel-commerce.workers.dev/`, com banco D1 de teste e arquivos privados por Static Assets. Não foi provisionado bucket R2. Os IDs de banco em `wrangler.jsonc` continuam placeholders; a configuração publicada é `wrangler.sandbox.jsonc`.
+- `wrangler.sandbox.jsonc` está preparado para habilitar somente compras de teste no domínio `https://fotocordel.com.br/`. A publicação inicial da API ocorreu; a configuração dos segredos/webhook e a verificação de um Checkout público ainda estão pendentes nesta atualização. A emissão de certificado e a transição do DNS do domínio também devem concluir antes desse ensaio.
 
 Os JPEGs fornecidos são composições com versos. Em 16 das 17 obras, o WebP já publicado tem a mesma resolução em pixels do JPEG disponível. Apenas Kite possui um original local maior. Esses arquivos servem para ensaiar a entrega, mas **não devem ser anunciados como novos masters exclusivos de alta resolução**. Miniaturas, imagens de leitura e QR codes já publicados continuam públicos; criar armazenamento privado não desfaz essa publicação anterior.
 
@@ -124,7 +124,28 @@ O navegador guarda o token do comprador em **sessionStorage**, antes de abrir o 
 
 Esta versão não tem conta de comprador, recuperação automática por e-mail ou comprovante exportável que restaure o token. O recibo de pagamento da Stripe não funciona como chave de download. Se o token for perdido, o responsável precisa verificar a compra e atender a entrega manualmente; não há endpoint administrativo de reemissão nesta implementação. Defina um canal de atendimento antes de ativar vendas reais.
 
-## Publicar um ambiente de teste, quando desejado
+## Sandbox público sem assinatura R2
+
+`wrangler.sandbox.jsonc` usa o mesmo backend de pedidos e o banco D1 de teste, com os 17 JPEGs de ensaio em `../.commerce-local/files` vinculados como `PRIVATE_FILES`. Esse caminho dispensa R2 no sandbox. `src/sandbox.js` recusa qualquer modo diferente de `test` e também chaves Stripe live; não deve ser usado para vendas reais.
+
+Os arquivos não têm rota pública: `run_worker_first: true` encaminha todas as requisições ao Worker, e caminhos como `/originals/12-jangada.jpg` retornam 404. O binding só é consultado para chaves do catálogo; o download continua exigindo token do comprador e pagamento confirmado pela Stripe. Mantenha `run_worker_first: true`, `html_handling: "none"` e `not_found_handling: "none"`. A documentação de [roteamento dos Static Assets](https://developers.cloudflare.com/workers/static-assets/routing/worker-script/) descreve esse fluxo de autorização antes do acesso ao binding.
+
+O adapter aceita JPEGs de ensaio de até 2 MiB por arquivo. Se o binding omitir `Content-Length`, ele mede o corpo dentro desse limite; arquivos maiores permanecem indisponíveis. Esse armazenamento de ensaio não substitui os masters de produção no R2 privado. Confira que a pasta de assets contém apenas as cópias de teste esperadas, sem credenciais ou outros documentos.
+
+Na pasta `commerce`, com a conta Cloudflare autenticada e o catálogo/arquivos de teste preparados:
+
+```powershell
+npx wrangler d1 migrations apply fotocordel-commerce-test --remote --config wrangler.sandbox.jsonc
+npx wrangler deploy --dry-run --config wrangler.sandbox.jsonc
+npx wrangler deploy --config wrangler.sandbox.jsonc
+node scripts/configure-sandbox.mjs --api "https://SEU-WORKER.workers.dev/" --secrets-file "C:/CAMINHO-PRIVADO/stripe-test.txt"
+```
+
+A configuração atual tem `SALES_ENABLED: "true"` para permitir compras simuladas após os segredos corretos estarem disponíveis. Sem os segredos e bindings necessários, a API mantém as compras indisponíveis. O script verifica o modo do Worker, cria ou reutiliza com segurança o webhook Stripe de teste e envia os segredos pelo stdin do Wrangler. O recibo com o segredo do webhook fica na pasta ignorada `.commerce-local/`; não o publique. Publique alterações **com `--config wrangler.sandbox.jsonc`** e confira `/health`, catálogo, webhook e download. Configure `shop-config.js` com a URL pública dessa API. `SITE_URL` é `https://fotocordel.com.br/`; a compra deve começar nessa origem para preservar o token do navegador no retorno do Checkout. CORS também admite `https://www.fotocordel.com.br` e a origem anterior `https://phellipe.eti.br` durante a migração, mas isso não compartilha `sessionStorage` entre domínios.
+
+Não use `--env live` com essa configuração. Para cobranças reais, siga o procedimento separado de produção abaixo. Para executar este adapter localmente, use `npx wrangler dev --local --config wrangler.sandbox.jsonc`; os valores locais de `.dev.vars` podem substituir as variáveis de desenvolvimento.
+
+## Publicar um ambiente de teste com R2
 
 Esta sequência cria recursos remotos; não é necessária para os testes locais. Execute dentro de `commerce`, com sua própria conta Cloudflare:
 
@@ -217,4 +238,4 @@ npm run check
 
 `npm run check` faz verificações sintáticas e um `wrangler deploy --dry-run`; não provisiona hospedagem. Testes automatizados e dry run não substituem um Checkout completo com webhook no ambiente escolhido. Este guia não declara pagamentos live nem recursos Cloudflare já disponíveis.
 
-Validação em 22/10/2026: 17 testes do backend passaram. Uma compra com cartão fictício foi concluída no Checkout hospedado da Stripe, em sandbox, por R$ 9,99. O retorno local confirmou o pagamento consultando a API Stripe e liberou o JPEG privado; o SHA-256 do arquivo baixado coincide com o original de teste. A interface foi conferida nas duas galerias e em viewport móvel de 390 × 844. O transporte externo de webhooks ainda precisa ser ensaiado no ambiente publicado; a assinatura e o processamento foram verificados nos testes automatizados.
+Validação em 22/10/2026: 23 testes do backend e do adapter de sandbox passaram. No runtime local do Wrangler, o catálogo reconheceu os 17 arquivos de teste e acessos diretos, inclusive um caminho codificado, retornaram 404. O dry run de `wrangler.sandbox.jsonc` passou. Uma compra com cartão fictício foi concluída no Checkout hospedado da Stripe, em sandbox, por R$ 9,99. O retorno local confirmou o pagamento consultando a API Stripe e liberou o JPEG privado; o SHA-256 do arquivo baixado coincide com o original de teste. A interface foi conferida nas duas galerias e em viewport móvel de 390 × 844. O transporte externo de webhooks ainda precisa ser ensaiado no ambiente publicado; a assinatura e o processamento foram verificados nos testes automatizados.
