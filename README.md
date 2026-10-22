@@ -11,9 +11,9 @@ Exposição estática de 17 fotopoesias de Marcello Tubarão, com **duas versõe
 
 ## Executar e publicar
 
-Na pasta do projeto, execute `python -m http.server 4173 --bind 127.0.0.1` e abra [V1 local](http://127.0.0.1:4173/) ou [V2 local](http://127.0.0.1:4173/v2/).
+Na pasta do projeto, execute `python scripts/serve-preview.py` e abra [V1 local](http://127.0.0.1:4173/) ou [V2 local](http://127.0.0.1:4173/v2/).
 
-Não há instalação para visualizar, build ou backend. HTML, CSS, JavaScript, fontes, imagens e QR são locais. O GitHub Pages publica a raiz de `main` após commit e push; `.nojekyll` dispensa o Jekyll. O endereço `https://phellipe.github.io/fotocordel/` redireciona para o domínio público acima.
+As galerias não exigem instalação, build ou backend para visualização. HTML, CSS, JavaScript, fontes, imagens e QR são locais. A compra opcional usa o serviço separado descrito abaixo. O GitHub Pages publica a raiz de `main` após commit e push; `.nojekyll` dispensa o Jekyll. O endereço `https://phellipe.github.io/fotocordel/` redireciona para o domínio público acima.
 
 ## Experiência das versões
 
@@ -50,3 +50,11 @@ A xilogravura da **V2** foi gerada com a ferramenta nativa `image_gen`; prompt e
 Referências visuais consultadas na sessão autenticada do Skillry: [Allegorical Engraving Cover](https://skillry.dev/skills/bs-allegorical-engraving-cover), [Collage Creative Portfolio](https://skillry.dev/skills/bs-collage-creative-portfolio) e [Cut-Paper Collective](https://skillry.dev/skills/bs-cutpaper-collective-site). Também foi consultado o [guia público do Impeccable](https://impeccable.style/slop/). São referências de direção de arte; nenhum pacote dessas referências foi instalado ou incorporado.
 
 Fotografias e poemas conservam os créditos presentes nas obras. O acervo não foi relicenciado.
+
+## Compra de arquivos digitais (integração preparada)
+
+As duas versões têm um módulo compartilhado de compra por **R$ 9,99**, com uso pessoal e comercial. O código do backend em `commerce/` usa Stripe Checkout, Cloudflare Workers, D1 e R2 privado; não exige VPS. A configuração pública `shop-config.js` permanece desabilitada até a hospedagem e a entrega final estarem prontas.
+
+Os 17 produtos e preços foram criados na área de teste da Stripe. Isso não ativa vendas reais. A conta consultada ainda exige ativação para pagamentos de produção; os arquivos atuais não constituem um acervo separado em alta resolução. Nenhum segredo ou original pago deve ser publicado no GitHub Pages.
+
+Consulte [a documentação de comércio](commerce/README.md) para executar, validar e publicar o serviço. Para prévias locais, use `scripts/serve-preview.py`, que bloqueia acesso aos originais, credenciais e arquivos do backend.

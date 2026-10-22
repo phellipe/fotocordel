@@ -1,0 +1,46 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fotocordel-commerce-test",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-22",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "vars": {
+    "STRIPE_MODE": "test",
+    "SALES_ENABLED": "false",
+    "SITE_URL": "https://phellipe.eti.br/fotocordel/",
+    "ALLOWED_ORIGINS": ""
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "fotocordel-commerce-test",
+    // Replace only after explicitly creating the deployment database.
+    "database_id": "00000000-0000-0000-0000-000000000000",
+    "migrations_dir": "migrations"
+  }],
+  "r2_buckets": [{
+    "binding": "ORIGINALS",
+    "bucket_name": "fotocordel-originals-test"
+  }],
+  "env": {
+    "live": {
+      "name": "fotocordel-commerce",
+      "vars": {
+        "STRIPE_MODE": "live",
+        "SALES_ENABLED": "false",
+        "SITE_URL": "https://phellipe.eti.br/fotocordel/",
+        "ALLOWED_ORIGINS": ""
+      },
+      "d1_databases": [{
+        "binding": "DB",
+        "database_name": "fotocordel-commerce-live",
+        "database_id": "00000000-0000-0000-0000-000000000000",
+        "migrations_dir": "migrations"
+      }],
+      "r2_buckets": [{
+        "binding": "ORIGINALS",
+        "bucket_name": "fotocordel-originals-live"
+      }]
+    }
+  }
+}

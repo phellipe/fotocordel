@@ -72,6 +72,7 @@
   function showPhoto(index) {
     currentIndex = (index + viewerPhotos.length) % viewerPhotos.length;
     const photo = viewerPhotos[currentIndex];
+    window.FotocordelShop?.selectPhoto(photo.id);
     resetZoom();
     if (viewerImage.getAttribute('src') !== (photo.full || photo.src)) {
       viewerImage.style.opacity = '0';

@@ -15,6 +15,9 @@
   <link rel="preload" href="assets/fonts/fraunces.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <script src="gallery-data.js" defer></script>
+  <link rel="stylesheet" href="shop.css">
+  <script src="shop-config.js" defer></script>
+  <script src="shop.js" defer></script>
   <script src="app.js" defer></script>
   <script src="sound.js" defer></script>
 </head>
@@ -90,7 +93,7 @@
 
   <dialog id="photo-dialog" aria-labelledby="viewer-title">
     <div class="viewer-header"><span id="viewer-counter"></span><span id="viewer-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></span><button type="button" id="viewer-close" aria-label="Fechar fotografia">Fechar <span aria-hidden="true">×</span></button></div>
-    <div class="viewer-layout"><div class="viewer-image-wrap" id="viewer-image-wrap"><img id="viewer-image" alt=""></div><div class="viewer-info"><p class="section-number" id="viewer-category"></p><h2 id="viewer-title"></h2><p id="viewer-poem" class="viewer-poem"></p><p id="viewer-credit"></p><button type="button" id="viewer-zoom" class="text-link" aria-pressed="false">Ampliar imagem <span aria-hidden="true">↗</span></button></div></div>
+    <div class="viewer-layout"><div class="viewer-image-wrap" id="viewer-image-wrap"><img id="viewer-image" alt=""></div><div class="viewer-info"><p class="section-number" id="viewer-category"></p><h2 id="viewer-title"></h2><p id="viewer-poem" class="viewer-poem"></p><p id="viewer-credit"></p><button type="button" id="viewer-zoom" class="text-link" aria-pressed="false">Ampliar imagem <span aria-hidden="true">↗</span></button><div id="viewer-purchase" class="viewer-purchase" hidden></div></div></div>
     <div class="viewer-bottom"><button type="button" id="viewer-prev" aria-label="Fotopoesia anterior">← <span>Anterior</span></button><p>Um instante de cada vez.</p><button type="button" id="viewer-next" aria-label="Próxima fotopoesia"><span>Próxima</span> →</button></div>
   </dialog>
 </body>

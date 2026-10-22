@@ -1,0 +1,17 @@
+{
+  "name": "fotocordel-commerce",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Private digital-photo delivery through Stripe Checkout, Workers, D1 and R2.",
+  "engines": { "node": ">=22.16.0" },
+  "scripts": {
+    "dev": "wrangler dev --local --ip 127.0.0.1 --port 8787",
+    "test": "node --test test/*.test.js",
+    "check": "node --check src/worker.js && node --check src/index.js && wrangler deploy --dry-run --env=",
+    "migrate:local": "wrangler d1 migrations apply fotocordel-commerce-test --local",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": { "stripe": "23.0.0" },
+  "devDependencies": { "wrangler": "4.151.3" }
+}

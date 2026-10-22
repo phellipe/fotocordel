@@ -15,6 +15,9 @@
   <link rel="preload" href="../assets/fonts/rye.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <script src="../gallery-data.js" defer></script>
+  <link rel="stylesheet" href="../shop.css">
+  <script src="../shop-config.js" defer></script>
+  <script src="../shop.js" defer></script>
   <script src="app.js" defer></script>
   <script src="sound.js" defer></script>
 </head>
@@ -78,7 +81,7 @@
 
   <dialog id="photo-dialog" aria-labelledby="viewer-title">
     <div class="viewer-header"><span id="viewer-counter"></span><span id="viewer-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></span><button type="button" id="viewer-close" aria-label="Fechar fotografia">Fechar <svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg></button></div>
-    <div class="viewer-layout"><div class="viewer-image-wrap" id="viewer-image-wrap"><img id="viewer-image" alt=""></div><div class="viewer-info"><p id="viewer-category"></p><h2 id="viewer-title"></h2><p id="viewer-poem" class="viewer-poem"></p><p id="viewer-credit"></p><button type="button" id="viewer-zoom" class="text-link" aria-pressed="false">Ampliar imagem</button></div></div>
+    <div class="viewer-layout"><div class="viewer-image-wrap" id="viewer-image-wrap"><img id="viewer-image" alt=""></div><div class="viewer-info"><p id="viewer-category"></p><h2 id="viewer-title"></h2><p id="viewer-poem" class="viewer-poem"></p><p id="viewer-credit"></p><button type="button" id="viewer-zoom" class="text-link" aria-pressed="false">Ampliar imagem</button><div id="viewer-purchase" class="viewer-purchase" hidden></div></div></div>
     <div class="viewer-bottom"><button type="button" id="viewer-prev" aria-label="Fotopoesia anterior"><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg> Anterior</button><button type="button" id="viewer-sound-toggle" class="viewer-sound" aria-pressed="true" data-sound-state="waiting"><span data-sound-label>Ativar som do mar</span></button><button type="button" id="viewer-next" aria-label="Próxima fotopoesia">Próxima <svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button></div>
   </dialog>
 </body>

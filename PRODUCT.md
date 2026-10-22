@@ -27,8 +27,10 @@ O pedido atual é manter **as duas versões**, sem substituir a original. Elas c
 
 ## Limites e conteúdo
 
-Não há backend, cadastro, formulário de envio, compra ou analytics implementado. A única preferência persistida é a escolha de silenciar o som na V2, armazenada no navegador. Fontes, imagens e scripts são servidos pelo próprio site.
+O site público continua como exposição estática, com as vendas desabilitadas até a configuração de produção. O código de comércio foi preparado separadamente em `commerce/`: Stripe Checkout, pedidos em D1 e arquivos privados em R2. A interface comum às versões vende cada arquivo por R$ 9,99 com uso pessoal e comercial. Não há cadastro ou analytics. O som usa armazenamento local; o acesso à compra usa um token da sessão do navegador, com validade de 30 dias. A recuperação automática por e-mail ainda não está implementada.
 
 Os títulos de navegação são editoriais; imagens e assinaturas continuam sendo as obras originais. Transcrições devem ser conferidas com o autor. A imagem azul de macramê é um estudo visual, não prova de um QR tecido funcional. A peça física precisa ser produzida a partir da matriz correta e testada.
 
 Novas obras e mudanças editoriais entram pelos arquivos do projeto. Os próximos refinamentos devem preservar a leitura dos versos, a integridade das fotografias e o acesso simples pelo QR.
+
+Os 17 produtos Stripe existentes são de teste. Todos os itens do catálogo exigem revisão dos arquivos finais antes de habilitar produção; os JPEGs fornecidos não devem ser anunciados como masters de alta resolução exclusivos.

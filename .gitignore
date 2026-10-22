@@ -4,3 +4,14 @@ __pycache__/
 *.log
 .DS_Store
 Thumbs.db
+node_modules/
+.wrangler/
+.commerce-local/
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+secrets.txt
+private/

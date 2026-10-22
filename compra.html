@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#ecdbaf">
+  <title>Sua compra — Fotocordel</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <style>
+    @font-face{font-family:Rye;src:url('assets/fonts/rye.ttf') format('truetype');font-weight:400;font-display:swap}
+    @font-face{font-family:'DM Sans';src:url('assets/fonts/dm-sans.ttf') format('truetype');font-weight:400;font-display:swap}
+  </style>
+  <link rel="stylesheet" href="shop.css">
+  <script src="shop-config.js" defer></script>
+  <script src="shop.js" defer></script>
+</head>
+<body class="shop-return" data-shop-return>
+  <header class="shop-return-header"><a class="shop-return-brand" href="./">Fotocordel</a><a id="shop-back-link" href="./#acervo">Voltar ao varal</a></header>
+  <main class="shop-return-main">
+    <section class="shop-return-sheet" aria-labelledby="shop-order-title">
+      <span id="shop-order-test" class="shop-test" hidden>Ambiente de teste · sem cobrança real</span>
+      <h1 id="shop-order-title">Consultando seu pedido</h1>
+      <p id="shop-order-status" class="shop-status-copy" role="status" aria-live="polite" aria-atomic="true">Aguarde a confirmação do pagamento.</p>
+      <div id="shop-order-summary" class="shop-order-summary" hidden></div>
+      <div class="shop-actions">
+        <button id="shop-download" class="shop-button" type="button" hidden>Baixar arquivo JPEG</button>
+        <button id="shop-order-retry" class="shop-button shop-button-secondary" type="button" hidden>Consultar novamente</button>
+      </div>
+      <p id="shop-download-message" class="shop-message" role="status" aria-live="polite" hidden></p>
+      <p id="shop-order-help" class="shop-help"></p>
+      <p id="shop-order-reference" class="shop-footnote" hidden>Pedido: <span id="shop-order-id" class="shop-order-id"></span></p>
+      <noscript><p>Ative o JavaScript nesta página para consultar o pedido e baixar o arquivo. A página de retorno, sozinha, não confirma o pagamento.</p></noscript>
+    </section>
+    <p class="shop-footnote">Fotopoesias de Marcello Tubarão. A confirmação e a liberação do arquivo são feitas pelo serviço de pagamentos.</p>
+  </main>
+</body>
+</html>

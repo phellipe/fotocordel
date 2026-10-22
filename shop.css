@@ -1,0 +1,49 @@
+/* Shared commerce UI: inherits each edition's paper, ink and type palette. */
+.shop-purchase[hidden], .shop-return [hidden] { display: none !important; }
+.shop-purchase { margin-top: 30px; padding: 24px 0 4px; border-top: 1px solid var(--line, #a49777); font-family: var(--body, 'DM Sans', Arial, sans-serif); }
+.shop-purchase h3 { margin: 0; font: 700 24px/1.25 Georgia, serif; letter-spacing: normal; }
+.shop-purchase p { margin: 12px 0 0; font-size: 14px; line-height: 1.65; }
+.shop-purchase .shop-price { font: 700 28px/1.2 Georgia, serif; color: var(--ink, #24251d); }
+.shop-purchase .shop-file, .shop-purchase .shop-note { color: var(--muted, #625842); font-size: 12px; }
+.shop-purchase .shop-license { max-width: 38em; }
+.shop-test { display: inline-block; margin: 0 0 14px; padding: 5px 9px; border: 1px solid currentColor; color: var(--clay, #963f26); font: 600 12px/1.4 var(--body, Arial, sans-serif); }
+.shop-purchase .shop-button, .shop-return .shop-button { display: inline-flex; justify-content: center; align-items: center; min-height: 48px; padding: 12px 19px; margin-top: 18px; border: 1px solid var(--ink, #24251d); border-radius: 0; background: var(--ink, #24251d); color: var(--leaf, #f6ecd3); font: 500 14px/1.5 var(--body, 'DM Sans', Arial, sans-serif); cursor: pointer; text-decoration: none; }
+.shop-purchase .shop-button:hover:not(:disabled), .shop-return .shop-button:hover:not(:disabled) { background: var(--blue, #284d64); border-color: var(--blue, #284d64); }
+.shop-purchase .shop-button:disabled, .shop-return .shop-button:disabled { opacity: .65; cursor: wait; }
+.shop-purchase a:focus-visible, .shop-purchase button:focus-visible, .shop-return a:focus-visible, .shop-return button:focus-visible { outline: 3px solid var(--clay, #963f26); outline-offset: 5px; }
+.shop-purchase .shop-message { margin-top: 14px; font-size: 13px; min-height: 1.65em; }
+.shop-message[data-error='true'] { color: var(--clay, #963f26); }
+.shop-receipt-link { display: inline-block; margin-top: 16px; text-decoration: underline; text-underline-offset: 4px; font-size: 14px; }
+.shop-return { margin: 0; background: #ecdbaf; color: #24251d; font: 16px/1.7 'DM Sans', Arial, sans-serif; --paper: #ecdbaf; --leaf: #f6ecd3; --ink: #24251d; --blue: #284d64; --clay: #963f26; --muted: #625842; --line: #a49777; --body: 'DM Sans', Arial, sans-serif; }
+.shop-return *, .shop-return *::before, .shop-return *::after { box-sizing: border-box; }
+.shop-return a { color: inherit; text-underline-offset: .2em; }
+.shop-return-header { max-width: 920px; margin: auto; padding: 30px 24px; display: flex; justify-content: space-between; gap: 20px; align-items: center; }
+.shop-return-brand { font: 400 27px/1.2 Rye, Georgia, serif; text-decoration: none; }
+.shop-return-header > a:last-child { font-size: 14px; }
+.shop-return-main { max-width: 760px; margin: 24px auto 80px; padding: 0 24px; }
+.shop-return-sheet { background: var(--leaf); border: 1px solid var(--ink); padding: clamp(24px, 5vw, 48px); }
+.shop-return h1 { margin: 0 0 20px; font: 400 clamp(28px, 5vw, 40px)/1.2 Rye, Georgia, serif; text-wrap: balance; }
+.shop-return p { margin: 16px 0 0; }
+.shop-return .shop-status-copy { font-size: 16px; }
+.shop-order-summary { margin: 28px 0 0; padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.shop-order-summary h2 { margin: 0 0 14px; font: 700 26px/1.3 Georgia, serif; }
+.shop-order-summary dl { margin: 0; display: grid; grid-template-columns: minmax(100px, 1fr) 2fr; gap: 10px 22px; font-size: 14px; }
+.shop-order-summary dt { color: var(--muted); }
+.shop-order-summary dd { margin: 0; overflow-wrap: anywhere; }
+.shop-return .shop-actions { display: flex; flex-wrap: wrap; gap: 0 20px; align-items: center; }
+.shop-return .shop-button-secondary { background: transparent; color: var(--ink); }
+.shop-return .shop-button-secondary:hover:not(:disabled) { color: var(--leaf); }
+.shop-return .shop-help { margin-top: 26px; font-size: 13px; color: var(--muted); }
+.shop-return .shop-footnote { font-size: 12px; color: var(--muted); margin-top: 22px; }
+.shop-return .shop-order-id { font-family: monospace; font-size: 12px; overflow-wrap: anywhere; }
+.shop-return noscript p { padding: 15px; border: 1px solid var(--clay); }
+@media (max-width: 540px) {
+  .shop-purchase h3 { font-size: 22px; }
+  .shop-return-header { padding: 22px 20px; }
+  .shop-return-brand { font-size: 23px; }
+  .shop-return-header > a:last-child { font-size: 12px; }
+  .shop-return-main { padding: 0 18px; margin-top: 12px; }
+  .shop-order-summary dl { grid-template-columns: 1fr; gap: 2px; }
+  .shop-order-summary dd { margin-bottom: 12px; }
+  .shop-return .shop-actions { align-items: stretch; flex-direction: column; }
+}
