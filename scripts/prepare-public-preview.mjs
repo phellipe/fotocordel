@@ -1,4 +1,4 @@
-/** Stage only the approved public V1 for the temporary static Worker. Never deploys. */
+/** Stage public files: V1 at the entrance, V2 unlisted for existing order returns. Never deploys. */
 import { copyFile, lstat, mkdir, readdir, realpath, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,8 +8,11 @@ const output = path.join(root, '.commerce-local', 'preview');
 const publicFiles = [
   'index.html', 'styles.css', 'app.js', 'sound.js', 'gallery-data.js',
   'shop-config.js', 'shop.css', 'shop.js', 'compra.html',
+  'v2/index.html', 'v2/styles.css', 'v2/app.js', 'v2/sound.js', 'v2/compra.html',
   'assets/favicon.svg', 'assets/og-cover.jpg',
   'assets/qr/fotocordel-qr.png', 'assets/qr/fotocordel-qr.svg',
+  'assets/qr/fotocordel-v2-qr.png', 'assets/qr/fotocordel-v2-qr.svg',
+  'assets/art/sertao-mar-xilo.webp',
   'assets/fonts/fraunces.ttf', 'assets/fonts/fraunces-OFL.txt',
   'assets/fonts/cormorant-italic.ttf', 'assets/fonts/cormorantgaramond-OFL.txt',
   'assets/fonts/dm-sans.ttf', 'assets/fonts/dmsans-OFL.txt',
@@ -93,6 +96,6 @@ if (finalFiles.length !== allowlist.size || finalFiles.some(file => !allowlist.h
 console.log(JSON.stringify({
   output, files: finalFiles.length, bytes: totalBytes,
   expectedPreviewURL: 'https://fotocordel-preview.fotocordel-commerce.workers.dev/',
-  edition: 'v1', deploymentPerformed: false,
-  excluded: ['images/', 'commerce/', 'v2/', 'private originals', 'credentials', 'V2 QR codes', 'art source PNGs'],
+  edition: 'v1', unlistedEdition: 'v2', deploymentPerformed: false,
+  excluded: ['images/', 'commerce/', 'private originals', 'credentials', 'art source PNGs'],
 }, null, 2));

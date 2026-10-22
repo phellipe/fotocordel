@@ -269,7 +269,7 @@ export function createWorker({ catalog, stripeFactory, now = nowSeconds } = {}) 
       if (order.photo_id !== photo.id || order.edition !== body.edition || order.mode !== config.mode || !sameHash(order.buyer_token_hash, buyerHash)) fail(409, 'REQUEST_CONFLICT', 'Esta tentativa de compra já foi utilizada.');
     }
     if (now() - order.created_at >= 23 * 60 * 60) fail(409, 'CHECKOUT_EXPIRED', 'Inicie uma nova compra.');
-    const success = new URL('compra.html', checkoutSite);
+    const success = new URL(order.edition === 'v2' ? 'v2/compra.html' : 'compra.html', checkoutSite);
     success.searchParams.set('pedido', order.id);
     const cancel = new URL(success);
     cancel.searchParams.set('cancelado', '1');

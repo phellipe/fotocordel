@@ -46,7 +46,7 @@ test('checkout uses fixed prices, server URLs, no buyer token and durable idempo
   const { parameters, settings } = f.calls.create[0];
   assert.equal(parameters.line_items[0].price, PHOTO.testPriceId);
   assert.equal(parameters.line_items[0].quantity, 1);
-  assert.equal(parameters.success_url, `https://phellipe.eti.br/fotocordel/compra.html?pedido=${first.orderId}`);
+  assert.equal(parameters.success_url, `https://phellipe.eti.br/fotocordel/v2/compra.html?pedido=${first.orderId}`);
   assert.equal(parameters.cancel_url, `${parameters.success_url}&cancelado=1`);
   assert.equal(parameters.payment_method_types, undefined);
   assert.equal(JSON.stringify(parameters).includes(BUYER_TOKEN), false);
@@ -82,6 +82,37 @@ test('checkout returns to its allowlisted origin and an existing session keeps i
   const preflight = await f.api('/checkout', { method: 'OPTIONS', headers: { Origin: new URL(preview).origin } });
   assert.equal(preflight.status, 204);
   assert.equal(preflight.headers.get('Access-Control-Allow-Origin'), new URL(preview).origin);
+});
+
+test('each edition returns to its own receipt on both allowed origins and keeps the stored edition', async t => {
+  const sites = ['https://fotocordel.com.br/', 'https://fotocordel-preview.fotocordel-commerce.workers.dev/'];
+  const f = fixture({ env: { SITE_URL: sites[0], CHECKOUT_SITE_URLS: sites } });
+  t.after(() => f.db.close());
+  for (const site of sites) {
+    for (const edition of ['v1', 'v2']) {
+      const requestId = randomUUID();
+      const send = requestedEdition => f.api('/checkout', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Origin: new URL(site).origin },
+        body: JSON.stringify({ photoId: PHOTO.id, edition: requestedEdition, requestId, buyerToken: BUYER_TOKEN }),
+      });
+      const result = await send(edition);
+      assert.equal(result.status, 201);
+      const order = await result.json();
+      const parameters = f.calls.create.at(-1).parameters;
+      const receipt = edition === 'v2' ? 'v2/compra.html' : 'compra.html';
+      assert.equal(parameters.success_url, `${site}${receipt}?pedido=${order.orderId}`);
+      assert.equal(parameters.cancel_url, `${site}${receipt}?pedido=${order.orderId}&cancelado=1`);
+      const status = await (await f.authorized(`/orders/${order.orderId}`)).json();
+      assert.equal(status.edition, edition);
+      assert.equal(status.status, 'pending');
+      const created = f.calls.create.length;
+      const retry = await send(edition);
+      assert.equal(retry.status, 200); assert.deepEqual(await retry.json(), order);
+      assert.equal(f.calls.create.length, created);
+      assert.equal((await send(edition === 'v1' ? 'v2' : 'v1')).status, 409);
+      assert.equal(f.calls.create.length, created);
+    }
+  }
 });
 
 test('checkout never accepts an attacker origin or a client-supplied return URL', async t => {

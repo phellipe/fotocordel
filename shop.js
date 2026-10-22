@@ -125,8 +125,11 @@
     purchaseMount.hidden = true;
     return purchaseMount;
   }
-  function receiptURL(orderId) {
-    const url = new URL('compra.html', siteRoot);
+  function editionRoot(orderEdition) {
+    return new URL(orderEdition === 'v2' ? 'v2/' : './', siteRoot);
+  }
+  function receiptURL(orderId, orderEdition = edition) {
+    const url = new URL('compra.html', editionRoot(orderEdition));
     url.searchParams.set('pedido', orderId);
     return url.href;
   }
@@ -188,7 +191,7 @@
         button.textContent = 'Iniciar nova compra';
         if (attempt?.orderId && UUID.test(attempt.orderId)) {
           const previousOrder = node('a', 'shop-receipt-link', 'Ver pedido anterior');
-          previousOrder.href = receiptURL(attempt.orderId);
+          previousOrder.href = receiptURL(attempt.orderId, attempt.edition);
           message.append(document.createElement('br'), previousOrder);
         }
       }
@@ -219,7 +222,7 @@
     const completed = attempt?.orderId && readStored(`order.${attempt.orderId}`);
     if (completed?.confirmedPaid && completed.apiBase === apiBase && TOKEN.test(completed.buyerToken)) {
       const link = node('a', 'shop-button', 'Acessar minha compra');
-      link.href = receiptURL(completed.orderId);
+      link.href = receiptURL(completed.orderId, completed.edition);
       mount.append(link);
     } else {
       const button = node('button', 'shop-button', catalog.mode === 'test' ? 'Testar compra na Stripe' : 'Comprar na Stripe');
@@ -253,6 +256,12 @@
     let downloading = false;
     let serverOrder;
     let order;
+    const setReturnLinks = orderEdition => {
+      const root = editionRoot(orderEdition);
+      document.querySelector('.shop-return-brand').href = root.href;
+      document.querySelector('#shop-back-link').href = new URL('#acervo', root).href;
+    };
+    setReturnLinks(edition);
     const setState = (heading, message, extra = '') => {
       title.textContent = heading;
       status.textContent = message;
@@ -269,8 +278,6 @@
       setState('Acesso não encontrado nesta aba', 'Não encontramos a autorização local para consultar este pedido.', 'Volte à aba em que iniciou o pagamento e use o retorno da Stripe. O número do pedido sozinho não libera o download. Fechar a aba ou apagar os dados da sessão pode remover esse acesso. Não faça outra compra apenas para tentar recuperar este arquivo.');
       return;
     }
-    const backLink = document.querySelector('#shop-back-link');
-    backLink.href = new URL('./#acervo', siteRoot).href;
     testBadge.hidden = order.mode !== 'test';
     if (!configured || order.apiBase !== apiBase) {
       setState('Consulta indisponível', 'O serviço de compras não está conectado a esta versão do site.', 'Seu pedido não foi confirmado nesta página. Mantenha esta aba e tente novamente quando o serviço estiver disponível.');
@@ -311,9 +318,19 @@
       status.textContent = 'Consultando a confirmação do pagamento…';
       try {
         const data = await request(`/orders/${orderId}`, { headers: authHeaders });
-        if (data.orderId !== orderId || !['test', 'live'].includes(data.mode) || data.mode !== order.mode) {
+        if (data.orderId !== orderId || !['test', 'live'].includes(data.mode) || data.mode !== order.mode || !['v1', 'v2'].includes(data.edition)) {
           throw new ShopError('A resposta não corresponde ao pedido desta sessão. Não foi liberado nenhum download.', 'order_response');
         }
+        // Old Stripe sessions keep their original return URL. The authenticated
+        // order selects the correct receipt without changing its access token.
+        if (data.edition !== edition) {
+          const destination = new URL(receiptURL(orderId, data.edition));
+          if (canceled) destination.searchParams.set('cancelado', '1');
+          location.replace(destination.href);
+          return;
+        }
+        order.edition = data.edition;
+        setReturnLinks(data.edition);
         serverOrder = data;
         testBadge.hidden = data.mode !== 'test';
         showSummary(data);

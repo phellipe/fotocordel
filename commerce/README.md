@@ -8,7 +8,7 @@ Backend de venda e entrega de arquivos digitais por Stripe Checkout, Cloudflare 
 - O catálogo contém 17 produtos/preços **de teste** já criados na Stripe. Os IDs de preço não são segredos.
 - `catalog.json` mantém `livePriceId: null` e `readyForLive: false` em todas as obras. O cadastro Stripe consultado ainda não estava habilitado para cobranças reais (`charges_enabled: false`).
 - O Worker de sandbox foi publicado em `https://fotocordel-commerce-test.fotocordel-commerce.workers.dev/`, com banco D1 de teste e arquivos privados por Static Assets. Não foi provisionado bucket R2. Os IDs de banco em `wrangler.jsonc` continuam placeholders; a configuração publicada é `wrangler.sandbox.jsonc`.
-- A API publicada está habilitada somente para compras de teste, com chaves e webhook de sandbox configurados. `wrangler.sandbox.jsonc` aceita a galeria canônica em `https://fotocordel.com.br/` e a prévia em `https://fotocordel-preview.fotocordel-commerce.workers.dev/`. A verificação de um Checkout público ainda está pendente nesta atualização; a prévia permite o ensaio enquanto o DNS do domínio canônico termina de propagar.
+- A API publicada está habilitada somente para compras de teste, com chaves e webhook de sandbox configurados. `wrangler.sandbox.jsonc` aceita a galeria canônica em `https://fotocordel.com.br/` e a prévia em `https://fotocordel-preview.fotocordel-commerce.workers.dev/`. O Checkout público da prévia foi validado em 22/10/2026, incluindo retorno à mesma origem, confirmação do pedido, webhook processado em D1 e download do JPEG. A validação de DNS e HTTPS do domínio canônico continua pendente.
 
 Os JPEGs fornecidos são composições com versos. Em 16 das 17 obras, o WebP já publicado tem a mesma resolução em pixels do JPEG disponível. Apenas Kite possui um original local maior. Esses arquivos servem para ensaiar a entrega, mas **não devem ser anunciados como novos masters exclusivos de alta resolução**. Miniaturas, imagens de leitura e QR codes já publicados continuam públicos; criar armazenamento privado não desfaz essa publicação anterior.
 
@@ -51,7 +51,7 @@ npm run dev
 python scripts/serve-preview.py --shop-api http://127.0.0.1:8787
 ```
 
-Abra `http://127.0.0.1:4173/` ou `http://127.0.0.1:4173/v2/`. Esse servidor usa uma lista de arquivos públicos permitidos e bloqueia `commerce/`, originais, arquivos ocultos e listagens de diretório. O parâmetro `--shop-api` habilita a loja **apenas na resposta em memória** de `shop-config.js`: o arquivo público permanece desabilitado, sem edições para reverter. Não substitua esse servidor por um servidor genérico da raiz, que poderia disponibilizar `.dev.vars` e os arquivos privados.
+Abra `http://127.0.0.1:4173/` ou `http://127.0.0.1:4173/v2/`. Esse servidor usa uma lista de arquivos públicos permitidos e bloqueia `commerce/`, originais, arquivos ocultos e listagens de diretório. O parâmetro `--shop-api` habilita e aponta a loja para a API local **apenas na resposta em memória** de `shop-config.js`: o arquivo em disco permanece inalterado, sem edições para reverter. Novas compras pela interface continuam disponíveis somente na V1. Não substitua esse servidor por um servidor genérico da raiz, que poderia disponibilizar `.dev.vars` e os arquivos privados.
 
 `SITE_URL` local deve ser `http://127.0.0.1:4173/`; as origens permitidas já estão no arquivo gerado. As origens são protocolo, domínio e porta, sem `/fotocordel/` ou `/v2/`.
 
@@ -118,7 +118,18 @@ Ao reutilizar um Checkout já registrado, o backend consulta a Stripe: se a sess
 | `GET /orders/<id>` | Consulta protegida do estado do pedido. |
 | `POST /orders/<id>/download` | Entrega o JPEG privado de um pedido pago e autorizado. |
 
-O retorno do Checkout abre `compra.html?pedido=<id>`, na raiz da galeria. Ao cancelar, acrescenta `cancelado=1`. A V2 usa a mesma página de compra da raiz. Por padrão, a raiz é `SITE_URL`; opcionalmente, `CHECKOUT_SITE_URLS` contém um array de raízes HTTPS permitidas (array no Wrangler ou string JSON em `.dev.vars`). Cada origem precisa ser única, sem credenciais, query ou fragmento, e a lista precisa incluir `SITE_URL`. O servidor escolhe a raiz correspondente ao cabeçalho `Origin`; se não houver `Origin`, usa `SITE_URL`. Origem sem raiz permitida não inicia compra, mesmo que tenha acesso CORS a outros endpoints. O cliente não pode enviar URL de retorno. Uma sessão Stripe já criada conserva sua URL original nas novas tentativas.
+O retorno do Checkout usa a página da edição registrada no pedido:
+
+| Edição | Recibo relativo à raiz da galeria |
+| --- | --- |
+| V1 | `compra.html?pedido=<id>` |
+| V2 | `v2/compra.html?pedido=<id>` |
+
+Ao cancelar, a URL acrescenta `cancelado=1`. Cada recibo conserva o visual, o logo e o link “Voltar ao varal” da respectiva edição. Uma sessão Stripe já criada mantém sua URL original nas novas tentativas. Por isso, o retorno legado de um pedido da V2 à página da raiz segue funcionando: depois da consulta autenticada, a página usa a edição devolvida pela API para encaminhar ao recibo correto na mesma origem, preservando o indicador de cancelamento. O token não é transferido pela URL nem substituído pelo número do pedido.
+
+Por padrão, a raiz é `SITE_URL`; opcionalmente, `CHECKOUT_SITE_URLS` contém um array de raízes HTTPS permitidas (array no Wrangler ou string JSON em `.dev.vars`). Cada origem precisa ser única, sem credenciais, query ou fragmento, e a lista precisa incluir `SITE_URL`. O servidor escolhe a raiz correspondente ao cabeçalho `Origin`; se não houver `Origin`, usa `SITE_URL`. Origem sem raiz permitida não inicia compra, mesmo que tenha acesso CORS a outros endpoints. O cliente não pode enviar URL de retorno. Assim, um Checkout iniciado no preview retorna ao preview, e um iniciado no domínio canônico retorna a esse domínio, conservando o acesso salvo no navegador.
+
+O preview estático é preparado por `../scripts/prepare-public-preview.mjs` com uma lista de 64 arquivos públicos permitidos. A V1 é a entrada divulgada. Galeria e recibo da V2 continuam disponíveis por URL direta para preservar pedidos, sem links de navegação, com `noindex` e sem novas compras pela interface dessa edição. Essa lista não inclui originais, credenciais ou arquivos do backend.
 
 O navegador guarda o token do comprador em **sessionStorage**, antes de abrir o Checkout. Consulta e download exigem esse token no cabeçalho `Authorization: Bearer …`; o número do pedido e o endereço de retorno sozinhos não dão acesso ao arquivo. O token não vai na URL. Sua validade no backend é de 30 dias, mas fechar a aba ou apagar os dados da sessão pode removê-lo antes. Mantenha a aba original até baixar o arquivo.
 
@@ -236,6 +247,10 @@ npm test
 npm run check
 ```
 
-`npm run check` faz verificações sintáticas e um `wrangler deploy --dry-run`; não provisiona hospedagem. Testes automatizados e dry run não substituem um Checkout completo com webhook no ambiente escolhido. Este guia não declara pagamentos live nem recursos Cloudflare já disponíveis.
+`npm run check` faz verificações sintáticas e um `wrangler deploy --dry-run`; não provisiona hospedagem. Testes automatizados e dry run não substituem um Checkout completo com webhook no ambiente escolhido. As validações descritas aqui usam somente pagamentos de teste, sem cobranças reais.
 
-Validação em 22/10/2026: 26 testes do backend e do adapter de sandbox passaram, incluindo seleção da origem de retorno, imutabilidade da sessão existente, configuração inválida e rejeição de origem/URL externa. No runtime local do Wrangler, o catálogo reconheceu os 17 arquivos de teste e acessos diretos, inclusive um caminho codificado, retornaram 404. O dry run de `wrangler.sandbox.jsonc` passou. Uma compra com cartão fictício foi concluída no Checkout hospedado da Stripe, em sandbox, por R$ 9,99. O retorno local confirmou o pagamento consultando a API Stripe e liberou o JPEG privado; o SHA-256 do arquivo baixado coincide com o original de teste. A interface foi conferida nas duas galerias e em viewport móvel de 390 × 844. O transporte externo de webhooks ainda precisa ser ensaiado no ambiente publicado; a assinatura e o processamento foram verificados nos testes automatizados.
+Validação local registrada em 22/10/2026: 26 testes do backend e do adapter de sandbox passaram, incluindo seleção da origem de retorno, imutabilidade da sessão existente, configuração inválida e rejeição de origem/URL externa. No runtime local do Wrangler, o catálogo reconheceu os 17 arquivos de teste e acessos diretos, inclusive um caminho codificado, retornaram 404. O dry run de `wrangler.sandbox.jsonc` passou. Uma compra com cartão fictício foi concluída no Checkout hospedado da Stripe, em sandbox, por R$ 9,99. O retorno local confirmou o pagamento consultando a API Stripe e liberou o JPEG privado; o SHA-256 do arquivo baixado coincidiu com o original de teste. A interface foi conferida nas duas galerias e em viewport móvel de 390 × 844.
+
+Na etapa pública de 22/10/2026, uma compra simulada completa foi validada no navegador pelo preview: o Checkout retornou à mesma origem, o pedido ficou `paid`, o webhook externo `checkout.session.completed` foi processado em D1 e o JPEG baixado teve SHA-256 igual ao original de teste. Essa validação não conclui a migração do domínio canônico, cujo DNS e HTTPS ainda precisam ser conferidos.
+
+Após separar os recibos por edição, os 35 testes passaram, incluindo retornos V1/V2, URLs legadas, cancelamento e preservação da autorização. Uma nova compra de teste pública confirmou o visual V1 e o download; abrir esse pedido pela rota V2 retornou automaticamente à V1. A tela móvel foi conferida sem transbordamento horizontal.

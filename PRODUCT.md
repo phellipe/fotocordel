@@ -24,7 +24,7 @@ Em 22/10/2026, o registro de **fotocordel.com.br** foi confirmado ativo e o usu�
 
 Preparar a migração com HTTPS para a V1 aprovada e conferir os retornos de pagamento e as origens permitidas da API. Preservar os arquivos da V2 sem divulgá-los. Planejar a continuidade dos endereços antigos para manter funcionais os QR codes já distribuídos; a compra do domínio, sozinha, não muda seus destinos.
 
-O preview público temporário serve apenas a V1. Foi publicado e validado em 22/10/2026 com compra completa no navegador em modo de teste: retorno à mesma origem, pedido confirmado como `paid`, webhook `checkout.session.completed` processado em D1 e download JPEG com SHA-256 igual ao original. O domínio canônico e o QR continuam sendo `https://fotocordel.com.br/`, com DNS ainda pendente. Os comandos de preparo e deploy do preview estão no [README](README.md#executar-e-publicar).
+O preview público temporário apresenta a V1 como entrada e inclui os arquivos da V2 por URL direta para preservar os retornos de pedidos dessa edição. A lista permitida contém 64 arquivos; a V2 permanece sem divulgação na navegação, com `noindex` e sem novas compras pela interface. O preview foi publicado e validado em 22/10/2026 com compra completa no navegador em modo de teste: retorno à mesma origem, pedido confirmado como `paid`, webhook `checkout.session.completed` processado em D1 e download JPEG com SHA-256 igual ao original. O domínio canônico e o QR continuam sendo `https://fotocordel.com.br/`, com DNS ainda pendente. Os comandos de preparo e deploy do preview estão no [README](README.md#executar-e-publicar).
 
 ## O que existe
 
@@ -38,7 +38,9 @@ O preview público temporário serve apenas a V1. Foi publicado e validado em 22
 
 O site público continua como exposição estática. O frontend conecta à API hospedada exclusiva de sandbox, habilitada somente para compras simuladas; o fluxo completo do Checkout público foi validado no preview em 22/10/2026. Isso não habilita cobranças reais. O código de comércio está em `commerce/`: Stripe Checkout, pedidos em D1 e JPEGs de teste em Static Assets privados, acessíveis somente após autorização pelo Worker. Não foi provisionado bucket R2 para esse sandbox; R2 privado permanece previsto para produção. A hospedagem depende dos planos e cotas dos serviços, sem garantia de gratuidade absoluta.
 
-A interface de compra aparece somente na V1, por R$ 9,99 com uso pessoal e comercial, e identifica claramente o modo de teste e o cartão fictício. Recibos antigos da V2 continuam acessíveis com seu token, mas “Voltar ao varal” sempre leva à V1. Não há cadastro ou analytics. O acesso à compra usa um token da sessão do navegador, com validade de 30 dias. A recuperação automática por e-mail ainda não está implementada.
+A interface de compra aparece somente na V1, por R$ 9,99 com uso pessoal e comercial, e identifica claramente o modo de teste e o cartão fictício. A V1 tem recibo em `compra.html`; a V2, em `v2/compra.html`. Visual, logo e “Voltar ao varal” correspondem à edição do pedido. URLs antigas de retorno continuam compatíveis: a consulta autenticada do pedido identifica sua edição e encaminha ao recibo correto na mesma origem, preservando o acesso salvo no navegador.
+
+Não há cadastro ou analytics. O acesso à compra usa um token da sessão do navegador, com validade de 30 dias no backend; fechar a aba ou apagar a sessão pode removê-lo antes. A recuperação automática por e-mail ainda não está implementada.
 
 Os títulos de navegação são editoriais; imagens e assinaturas continuam sendo as obras originais. Transcrições devem ser conferidas com o autor. A imagem azul de macramê é um estudo visual, não prova de um QR tecido funcional. A peça física precisa ser produzida a partir da matriz correta e testada.
 
