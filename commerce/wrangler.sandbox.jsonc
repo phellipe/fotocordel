@@ -10,7 +10,11 @@
     "STRIPE_MODE": "test",
     "SALES_ENABLED": "true",
     "SITE_URL": "https://fotocordel.com.br/",
-    "ALLOWED_ORIGINS": "https://fotocordel.com.br,https://www.fotocordel.com.br,https://phellipe.eti.br"
+    "CHECKOUT_SITE_URLS": [
+      "https://fotocordel.com.br/",
+      "https://fotocordel-preview.fotocordel-commerce.workers.dev/"
+    ],
+    "ALLOWED_ORIGINS": "https://fotocordel.com.br,https://fotocordel-preview.fotocordel-commerce.workers.dev"
   },
   "d1_databases": [{
     "binding": "DB",

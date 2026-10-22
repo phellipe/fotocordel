@@ -106,7 +106,10 @@ test('sandbox deployment routes every request through worker and has no public a
   assert.equal(config.vars.STRIPE_MODE, 'test');
   assert.equal(config.vars.SITE_URL, 'https://fotocordel.com.br/');
   assert.deepEqual(config.vars.ALLOWED_ORIGINS.split(','), [
-    'https://fotocordel.com.br', 'https://www.fotocordel.com.br', 'https://phellipe.eti.br',
+    'https://fotocordel.com.br', 'https://fotocordel-preview.fotocordel-commerce.workers.dev',
+  ]);
+  assert.deepEqual(config.vars.CHECKOUT_SITE_URLS, [
+    'https://fotocordel.com.br/', 'https://fotocordel-preview.fotocordel-commerce.workers.dev/',
   ]);
   assert.equal(config.r2_buckets, undefined); assert.equal(config.env?.live, undefined);
 });

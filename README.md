@@ -5,17 +5,29 @@ Exposição estática de 17 fotopoesias de Marcello Tubarão. **A V1 foi aprovad
 | Versão | Endereço | Direção |
 | --- | --- | --- |
 | V1 — aprovada | [Domínio próprio](https://fotocordel.com.br/) | “Entre o sal e a palavra”: composição editorial, azul, papel claro e fotografia pendurada no varal. |
+| V1 — teste temporário | [Preview público](https://fotocordel-preview.fotocordel-commerce.workers.dev/) | Mesma V1 aprovada; publicado e compra simulada validada em 22/10/2026. |
 | V2 — arquivada | Fontes preservadas em `v2/` | Estudo de folheto com xilogravura, oculto da navegação e marcado `noindex, nofollow`. |
 
 [Repositório](https://github.com/phellipe/fotocordel). A V1 mantém a base visual e o comportamento da versão original (`0f21bf7`). A V2 não foi apagada e sua URL direta ainda pode abrir; ocultação e `noindex` não são controle de acesso. Não divulgar a versão arquivada nem seu QR.
 
-**Domínio próprio:** `fotocordel.com.br` está registrado e configurado no `CNAME` do GitHub Pages. Metadados e novo QR da V1 apontam a esse endereço. A transição de DNS e a validação de HTTPS ainda precisam ser concluídas antes de considerar a migração pronta. Somente a V1 aprovada será apresentada; os retornos do pagamento e as origens da API devem acompanhar o domínio.
+**Domínio próprio:** `fotocordel.com.br` está registrado e configurado no `CNAME` do GitHub Pages. As entradas DNS foram salvas no Registro.br e aguardam publicação/propagação; DNS e HTTPS ainda precisam ser validados antes de considerar a migração pronta. Metadados e novo QR da V1 apontam a esse endereço. O preview temporário permite testar a V1 enquanto isso; o Checkout iniciado nele deve retornar ao próprio preview para conservar o acesso à compra na sessão do navegador.
 
 ## Executar e publicar
 
 Na pasta do projeto, execute `python scripts/serve-preview.py` e abra [a prévia local aprovada](http://127.0.0.1:4173/). A pasta `v2/` permanece disponível apenas como referência de manutenção.
 
 As galerias não exigem instalação, build ou backend para visualização. HTML, CSS, JavaScript, fontes, imagens e QR são locais. A compra opcional usa o serviço separado descrito abaixo. O GitHub Pages publica a raiz de `main` após commit e push; `.nojekyll` dispensa o Jekyll. O redirecionamento do antigo endereço `https://phellipe.github.io/fotocordel/` deve ser conferido após a propagação do novo domínio, inclusive para QR codes já distribuídos.
+
+Para preparar e publicar o preview estático no Cloudflare Workers, execute na raiz, com as dependências de `commerce/` instaladas e autenticação Cloudflare disponível:
+
+```sh
+npm ci --prefix commerce
+node scripts/prepare-public-preview.mjs
+node commerce/node_modules/wrangler/bin/wrangler.js deploy --dry-run --config commerce/wrangler.preview.jsonc
+node commerce/node_modules/wrangler/bin/wrangler.js deploy --config commerce/wrangler.preview.jsonc
+```
+
+O preparo copia somente os arquivos públicos permitidos da V1 para `.commerce-local/preview`, ignorada pelo Git. Não inclui a V2, os JPEGs originais, credenciais ou o backend. Execute-o novamente após mudanças no site. A configuração `commerce/wrangler.preview.jsonc` publica somente esses arquivos no Worker `fotocordel-preview`; a API de compras é publicada separadamente. O domínio canônico e o QR continuam apontando para `https://fotocordel.com.br/`.
 
 ## Experiência aprovada e estudo preservado
 
@@ -55,7 +67,9 @@ Fotografias e poemas conservam os créditos presentes nas obras. O acervo não f
 
 ## Compra de arquivos digitais (integração preparada)
 
-A V1 tem um módulo de compra por **R$ 9,99**, com uso pessoal e comercial. A V2 arquivada não apresenta novas compras; recibos de pedidos antigos dessa edição continuam consultáveis, sempre com retorno ao varal da V1. O backend em `commerce/` usa Stripe Checkout, Cloudflare Workers, D1 e R2 privado; não exige VPS. `shop-config.js` está preparado com `enabled: true` para a API exclusiva de sandbox `https://fotocordel-commerce-test.fotocordel-commerce.workers.dev`. O checkout público depende também da liberação de vendas no backend; essa preparação não ativa pagamentos reais.
+A V1 tem um módulo de compra por **R$ 9,99**, com uso pessoal e comercial. A V2 arquivada não apresenta novas compras; recibos de pedidos antigos dessa edição continuam consultáveis, sempre com retorno ao varal da V1. O backend em `commerce/` usa Stripe Checkout, Cloudflare Workers e D1; não exige VPS. O sandbox publicado entrega os JPEGs de teste por Static Assets privados, atrás da autorização do Worker; não foi provisionado nem é necessário ativar um bucket R2 para esse ensaio. O caminho previsto para produção usa R2 privado.
+
+`shop-config.js` está configurado com `enabled: true` para a API exclusiva de sandbox `https://fotocordel-commerce-test.fotocordel-commerce.workers.dev`, habilitada somente para compras simuladas. O preview foi publicado e validado em 22/10/2026: compra concluída no navegador em modo de teste, retorno à mesma origem, pedido `paid`, webhook `checkout.session.completed` processado em D1 e download JPEG com SHA-256 igual ao original. A interface identifica o teste e informa o cartão fictício; não há cobrança real pela Stripe nesse modo. Isso não é promessa de hospedagem gratuita: os serviços Cloudflare têm planos e cotas, conforme [a documentação de comércio](commerce/README.md).
 
 Os 17 produtos e preços foram criados na área de teste da Stripe. Isso não ativa vendas reais. A conta consultada ainda exige ativação para pagamentos de produção; os arquivos atuais não constituem um acervo separado em alta resolução. Nenhum segredo ou original pago deve ser publicado no GitHub Pages.
 

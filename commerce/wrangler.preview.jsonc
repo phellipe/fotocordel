@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fotocordel-preview",
+  "account_id": "f5a4c3b8247a292f29ffd80323676623",
+  "compatibility_date": "2026-10-22",
+  "workers_dev": true,
+  "assets": {
+    "directory": "../.commerce-local/preview",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  }
+}

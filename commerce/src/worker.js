@@ -73,7 +73,23 @@ function configuration(env) {
     if ((site.protocol !== 'https:' && !(mode === 'test' && local && site.protocol === 'http:')) || site.username || site.password || site.search || site.hash) throw new Error();
     site.pathname = `${site.pathname.replace(/\/$/, '')}/`;
   } catch { fail(503, 'UNAVAILABLE', 'A loja está temporariamente indisponível.'); }
-  const origins = new Set([site.origin]);
+  const checkoutSites = new Map([[site.origin, site]]);
+  if (env.CHECKOUT_SITE_URLS !== undefined) {
+    try {
+      const roots = typeof env.CHECKOUT_SITE_URLS === 'string' ? JSON.parse(env.CHECKOUT_SITE_URLS) : env.CHECKOUT_SITE_URLS;
+      if (!Array.isArray(roots) || roots.length === 0 || roots.length > 10) throw new Error();
+      checkoutSites.clear();
+      for (const value of roots) {
+        if (typeof value !== 'string' || value.includes('?') || value.includes('#')) throw new Error();
+        const root = new URL(value);
+        if (root.protocol !== 'https:' || root.username || root.password || checkoutSites.has(root.origin)) throw new Error();
+        root.pathname = `${root.pathname.replace(/\/$/, '')}/`;
+        checkoutSites.set(root.origin, root);
+      }
+      if (checkoutSites.get(site.origin)?.href !== site.href) throw new Error();
+    } catch { fail(503, 'UNAVAILABLE', 'A loja está temporariamente indisponível.'); }
+  }
+  const origins = new Set(checkoutSites.keys());
   for (const value of (env.ALLOWED_ORIGINS || '').split(',').map(value => value.trim()).filter(Boolean)) {
     try {
       const origin = new URL(value);
@@ -83,7 +99,7 @@ function configuration(env) {
   }
   const keyReady = new RegExp(`^(rk|sk)_${mode}_[A-Za-z0-9]+$`).test(env.STRIPE_SECRET_KEY || '');
   const ready = Boolean(keyReady && env.STRIPE_WEBHOOK_SECRET?.startsWith('whsec_') && env.DB && env.ORIGINALS);
-  return { mode, site, origins, ready, sales: env.SALES_ENABLED === 'true' && ready };
+  return { mode, site, checkoutSites, origins, ready, sales: env.SALES_ENABLED === 'true' && ready };
 }
 
 function publicPhoto(photo) {
@@ -210,6 +226,9 @@ export function createWorker({ catalog, stripeFactory, now = nowSeconds } = {}) 
 
   async function checkout(request, env, config, stripe) {
     if (!config.sales) fail(503, 'SALES_DISABLED', 'As compras ainda não estão disponíveis.');
+    const origin = request.headers.get('Origin');
+    const checkoutSite = origin ? config.checkoutSites.get(origin) : config.site;
+    if (!checkoutSite) fail(403, 'ORIGIN_FORBIDDEN', 'Origem não autorizada para iniciar uma compra.');
     if (!request.headers.get('Content-Type')?.toLowerCase().startsWith('application/json')) fail(415, 'INVALID_CONTENT_TYPE', 'Envie uma solicitação JSON.');
     let body;
     try { body = JSON.parse(new TextDecoder().decode(await boundedBody(request, 2048))); }
@@ -250,7 +269,7 @@ export function createWorker({ catalog, stripeFactory, now = nowSeconds } = {}) 
       if (order.photo_id !== photo.id || order.edition !== body.edition || order.mode !== config.mode || !sameHash(order.buyer_token_hash, buyerHash)) fail(409, 'REQUEST_CONFLICT', 'Esta tentativa de compra já foi utilizada.');
     }
     if (now() - order.created_at >= 23 * 60 * 60) fail(409, 'CHECKOUT_EXPIRED', 'Inicie uma nova compra.');
-    const success = new URL('compra.html', config.site);
+    const success = new URL('compra.html', checkoutSite);
     success.searchParams.set('pedido', order.id);
     const cancel = new URL(success);
     cancel.searchParams.set('cancelado', '1');

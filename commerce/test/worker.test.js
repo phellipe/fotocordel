@@ -57,6 +57,66 @@ test('checkout uses fixed prices, server URLs, no buyer token and durable idempo
   assert.equal((await f.checkout({ requestId, buyerToken: 'b'.repeat(64) })).status, 409);
 });
 
+test('checkout returns to its allowlisted origin and an existing session keeps its first return URL', async t => {
+  const main = 'https://fotocordel.com.br/';
+  const preview = 'https://fotocordel-preview.fotocordel-commerce.workers.dev/';
+  const f = fixture({ env: { SITE_URL: main, CHECKOUT_SITE_URLS: [main, preview] } });
+  t.after(() => f.db.close());
+  const requestId = randomUUID();
+  const send = (origin, id = randomUUID()) => f.api('/checkout', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', ...(origin ? { Origin: origin } : {}) },
+    body: JSON.stringify({ photoId: PHOTO.id, edition: 'v1', buyerToken: BUYER_TOKEN, requestId: id }),
+  });
+  const first = await (await send(new URL(preview).origin, requestId)).json();
+  assert.equal(f.calls.create[0].parameters.success_url, `${preview}compra.html?pedido=${first.orderId}`);
+  assert.equal(f.calls.create[0].parameters.cancel_url, `${preview}compra.html?pedido=${first.orderId}&cancelado=1`);
+  const repeat = await send(new URL(main).origin, requestId);
+  assert.equal(repeat.status, 200); assert.deepEqual(await repeat.json(), first);
+  assert.equal(f.calls.create.length, 1);
+  for (const origin of [new URL(main).origin, undefined]) {
+    const result = await send(origin);
+    assert.equal(result.status, 201);
+    const order = await result.json();
+    assert.equal(f.calls.create.at(-1).parameters.success_url, `${main}compra.html?pedido=${order.orderId}`);
+  }
+  const preflight = await f.api('/checkout', { method: 'OPTIONS', headers: { Origin: new URL(preview).origin } });
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get('Access-Control-Allow-Origin'), new URL(preview).origin);
+});
+
+test('checkout never accepts an attacker origin or a client-supplied return URL', async t => {
+  const main = 'https://fotocordel.com.br/';
+  const preview = 'https://fotocordel-preview.fotocordel-commerce.workers.dev/';
+  const f = fixture({ env: { SITE_URL: main, CHECKOUT_SITE_URLS: [main, preview], ALLOWED_ORIGINS: 'https://read-only.example' } });
+  t.after(() => f.db.close());
+  const body = { photoId: PHOTO.id, edition: 'v2', buyerToken: BUYER_TOKEN, requestId: randomUUID() };
+  for (const origin of ['https://fotocordel.com.br.evil.example', 'https://evil.example', 'null', 'https://www.fotocordel.com.br', 'https://phellipe.eti.br', 'https://read-only.example']) {
+    const result = await f.api('/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: origin }, body: JSON.stringify(body) });
+    assert.equal(result.status, 403, origin);
+  }
+  const injected = await f.api('/checkout', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', Origin: new URL(main).origin },
+    body: JSON.stringify({ ...body, returnUrl: 'https://evil.example/' }),
+  });
+  assert.equal(injected.status, 400); assert.equal(f.calls.create.length, 0);
+  assert.equal((await f.db.prepare('SELECT count(*) AS count FROM orders').first()).count, 0);
+});
+
+test('invalid checkout site lists halt the API, and JSON-string configuration is supported', async t => {
+  const main = 'https://fotocordel.com.br/';
+  const f = fixture({ env: { SITE_URL: main } });
+  t.after(() => f.db.close());
+  for (const roots of [null, {}, [], 'not json', [42], ['http://fotocordel.com.br/'], ['https://user:pass@fotocordel.com.br/'], [`${main}?x=1`], [`${main}#x`], [main, `${main}another/`], ['https://other.example/']]) {
+    f.env.CHECKOUT_SITE_URLS = roots;
+    const result = await f.api('/health');
+    assert.equal(result.status, 503, JSON.stringify(roots));
+    assert.equal((await result.json()).error.code, 'UNAVAILABLE');
+  }
+  f.env.CHECKOUT_SITE_URLS = JSON.stringify([main]);
+  assert.equal((await f.api('/health')).status, 200);
+  assert.equal(f.calls.create.length, 0);
+});
+
 test('unpaid checkout, wrong buyer, and expired token never deliver an original', async t => {
   const f = fixture(); t.after(() => f.db.close());
   const order = await (await f.checkout()).json();
