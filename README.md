@@ -10,13 +10,13 @@ Exposição estática de 17 fotopoesias de Marcello Tubarão. **A V1 foi aprovad
 
 [Repositório](https://github.com/phellipe/fotocordel). A V1 mantém a base visual e o comportamento da versão original (`0f21bf7`). A V2 não foi apagada e sua URL direta ainda pode abrir; ocultação e `noindex` não são controle de acesso. Não divulgar a versão arquivada nem seu QR.
 
-**Domínio próprio:** `fotocordel.com.br` está registrado e configurado no `CNAME` do GitHub Pages. As entradas DNS foram salvas no Registro.br e aguardam publicação/propagação; DNS e HTTPS ainda precisam ser validados antes de considerar a migração pronta. Metadados e novo QR da V1 apontam a esse endereço. O preview temporário permite testar a V1 enquanto isso; o Checkout iniciado nele deve retornar ao próprio preview para conservar o acesso à compra na sessão do navegador.
+**Domínio próprio:** DNS e HTTPS foram validados em **29/10/2026**. O DNS já estava propagado; faltava o certificado. Após remover e reinserir o domínio pela API do GitHub Pages, o certificado foi aprovado para `fotocordel.com.br` e `www.fotocordel.com.br`, com validade até **27/01/2027**, e `Enforce HTTPS` foi ativado. Uma requisição `curl` com verificação do certificado retornou HTTP 200 em `https://fotocordel.com.br/`; HTTP e `www` redirecionaram ao domínio sem `www`, em HTTPS. O preview continua como alternativa de teste; o Checkout iniciado nele retorna ao próprio preview para conservar o acesso à compra na sessão do navegador.
 
 ## Executar e publicar
 
 Na pasta do projeto, execute `python scripts/serve-preview.py` e abra [a prévia local aprovada](http://127.0.0.1:4173/). A V2 permanece acessível por URL direta em `/v2/`, sem divulgação na navegação, para preservar a consulta de pedidos dessa edição.
 
-As galerias não exigem instalação, build ou backend para visualização. HTML, CSS, JavaScript, fontes, imagens e QR são locais. A compra opcional usa o serviço separado descrito abaixo. O GitHub Pages publica a raiz de `main` após commit e push; `.nojekyll` dispensa o Jekyll. O redirecionamento do antigo endereço `https://phellipe.github.io/fotocordel/` deve ser conferido após a propagação do novo domínio, inclusive para QR codes já distribuídos.
+As galerias não exigem instalação, build ou backend para visualização. HTML, CSS, JavaScript, fontes, imagens e QR são locais. A compra opcional usa o serviço separado descrito abaixo. O GitHub Pages publica a raiz de `main` após commit e push; `.nojekyll` dispensa o Jekyll. O redirecionamento do antigo endereço `https://phellipe.github.io/fotocordel/` deve ser conferido separadamente, inclusive para QR codes antigos já distribuídos.
 
 Para preparar e publicar o preview estático no Cloudflare Workers, execute na raiz, com as dependências de `commerce/` instaladas e autenticação Cloudflare disponível:
 
@@ -53,7 +53,7 @@ Para atualizar as imagens: instale Pillow (`python -m pip install Pillow`), exec
 
 Para recriar os QRs: `python -m pip install qrcode Pillow` e `python scripts/create-qr.py`. O padrão gera ambos; `--version v1`, `--version v2` ou `--version both` seleciona a saída.
 
-- **QR atual da V1:** `fotocordel-qr.png/.svg` codifica `https://fotocordel.com.br/`. A troca deliberada do endereço usa `python scripts/create-qr.py --version v1 --replace-v1`; reproduções seguintes dispensam a opção de substituição.
+- **QR atual da V1:** `fotocordel-qr.png/.svg` codifica `https://fotocordel.com.br/`. Em 29/10/2026, o PNG publicado foi comparado com o arquivo local e era idêntico; a leitura com OpenCV confirmou esse destino. A troca deliberada do endereço usa `python scripts/create-qr.py --version v1 --replace-v1`; reproduções seguintes dispensam a opção de substituição.
 - **QR histórico da V2:** `fotocordel-v2-qr.png/.svg` conserva o destino antigo em `/v2/`; não distribuir.
 
 A referência azul de macramê é um estudo visual, não um código escaneável verificado; para a peça física, preserve módulos e margem da matriz funcional e teste a leitura.
@@ -73,6 +73,8 @@ A V1 tem um módulo de compra por **R$ 9,99**, com uso pessoal e comercial. A V2
 O backend em `commerce/` usa Stripe Checkout, Cloudflare Workers e D1; não exige VPS. O sandbox publicado entrega os JPEGs de teste por Static Assets privados, atrás da autorização do Worker; não foi provisionado nem é necessário ativar um bucket R2 para esse ensaio. O caminho previsto para produção usa R2 privado.
 
 `shop-config.js` está configurado com `enabled: true` para a API exclusiva de sandbox `https://fotocordel-commerce-test.fotocordel-commerce.workers.dev`, habilitada somente para compras simuladas. O preview foi publicado e validado em 22/10/2026: compra concluída no navegador em modo de teste, retorno à mesma origem, pedido `paid`, webhook `checkout.session.completed` processado em D1 e download JPEG com SHA-256 igual ao original. A interface identifica o teste e informa o cartão fictício; não há cobrança real pela Stripe nesse modo. Isso não é promessa de hospedagem gratuita: os serviços Cloudflare têm planos e cotas, conforme [a documentação de comércio](commerce/README.md).
+
+Em 29/10/2026, a API de teste e a permissão CORS para a origem `https://fotocordel.com.br` foram novamente verificadas. O fluxo completo de compra pelo domínio próprio ainda não foi validado no navegador: a automação local do navegador estava indisponível nessa etapa. A validação completa de 22/10 continua referente ao preview.
 
 Os 17 produtos e preços foram criados na área de teste da Stripe. Isso não ativa vendas reais. A conta consultada ainda exige ativação para pagamentos de produção; os arquivos atuais não constituem um acervo separado em alta resolução. Nenhum segredo ou original pago deve ser publicado no GitHub Pages.
 

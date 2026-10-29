@@ -12,7 +12,7 @@ Um QR code numa peça física de macramê é a porta de entrada para o site, esp
 
 | Versão | URL | Características |
 | --- | --- | --- |
-| V1 aprovada | `https://fotocordel.com.br/` (DNS/HTTPS em validação) | “Entre o sal e a palavra”; visual editorial do primeiro site, galeria original e som iniciado pelo visitante. |
+| V1 aprovada | `https://fotocordel.com.br/` (DNS/HTTPS validados em 29/10/2026) | “Entre o sal e a palavra”; visual editorial do primeiro site, galeria original e som iniciado pelo visitante. |
 | V1 em teste temporário | `https://fotocordel-preview.fotocordel-commerce.workers.dev/` | Publicado e Checkout simulado validado em 22/10/2026, sem depender do DNS definitivo. |
 | V2 arquivada | Fontes em `v2/`, sem divulgação | Estudo de cordel com xilogravura; preservado e marcado `noindex, nofollow`. |
 
@@ -20,11 +20,11 @@ O pedido atual é mostrar **somente a V1**. O seletor de versões foi removido. 
 
 ## Migração de domínio
 
-Em 22/10/2026, o registro de **fotocordel.com.br** foi confirmado ativo e o usuário autorizou avançar. O `CNAME` do GitHub Pages está configurado e as entradas DNS foram salvas no Registro.br, aguardando publicação/propagação. A migração deve ser considerada concluída somente após verificar DNS, HTTPS, páginas públicas e retornos do Checkout no novo domínio.
+Em 22/10/2026, o registro de **fotocordel.com.br** foi confirmado ativo, o usuário autorizou avançar e as entradas DNS foram salvas no Registro.br. Em **29/10/2026**, o DNS já estava propagado, mas faltava o certificado HTTPS. A remoção e reinserção do domínio pela API do GitHub Pages resultou na aprovação do certificado para o domínio sem `www` e para `www`, válido até **27/01/2027**, com HTTPS obrigatório ativado. A verificação com `curl`, validando o certificado, retornou HTTP 200 no domínio HTTPS; os acessos por HTTP e `www` redirecionaram para `https://fotocordel.com.br/`.
 
-Preparar a migração com HTTPS para a V1 aprovada e conferir os retornos de pagamento e as origens permitidas da API. Preservar os arquivos da V2 sem divulgá-los. Planejar a continuidade dos endereços antigos para manter funcionais os QR codes já distribuídos; a compra do domínio, sozinha, não muda seus destinos.
+O PNG do QR publicado foi confirmado idêntico ao arquivo local em 29/10/2026; a leitura com OpenCV devolveu `https://fotocordel.com.br/`. A API de teste e CORS para essa origem foram verificados novamente. A compra completa pela interface do domínio próprio ainda não foi testada: a automação local do navegador estava indisponível. Os redirecionamentos dos endereços antigos precisam de conferência separada para preservar QR codes antigos já distribuídos. Os arquivos da V2 continuam preservados e sem divulgação.
 
-O preview público temporário apresenta a V1 como entrada e inclui os arquivos da V2 por URL direta para preservar os retornos de pedidos dessa edição. A lista permitida contém 64 arquivos; a V2 permanece sem divulgação na navegação, com `noindex` e sem novas compras pela interface. O preview foi publicado e validado em 22/10/2026 com compra completa no navegador em modo de teste: retorno à mesma origem, pedido confirmado como `paid`, webhook `checkout.session.completed` processado em D1 e download JPEG com SHA-256 igual ao original. O domínio canônico e o QR continuam sendo `https://fotocordel.com.br/`, com DNS ainda pendente. Os comandos de preparo e deploy do preview estão no [README](README.md#executar-e-publicar).
+O preview público temporário continua como alternativa de teste, apresenta a V1 como entrada e inclui os arquivos da V2 por URL direta para preservar os retornos de pedidos dessa edição. A lista permitida contém 64 arquivos; a V2 permanece sem divulgação na navegação, com `noindex` e sem novas compras pela interface. O preview foi publicado e validado em 22/10/2026 com compra completa no navegador em modo de teste: retorno à mesma origem, pedido confirmado como `paid`, webhook `checkout.session.completed` processado em D1 e download JPEG com SHA-256 igual ao original. Essa validação de compra refere-se ao preview; o domínio canônico e o QR são `https://fotocordel.com.br/`, agora com DNS e HTTPS validados. Os comandos de preparo e deploy do preview estão no [README](README.md#executar-e-publicar).
 
 ## O que existe
 
@@ -32,7 +32,7 @@ O preview público temporário apresenta a V1 como entrada e inclui os arquivos 
 - Leitor com fotografia completa, transcrição, crédito, zoom e navegação.
 - Som sintético com volume e opção de vento. Na V2, mar habilitado por padrão, sujeito à liberação de áudio do navegador, com silêncio persistente e controles flutuante e no leitor.
 - Capa ilustrada de sertão e mar na V2, separada do acervo fotográfico original.
-- Hospedagem estática em GitHub Pages, com preview temporário da V1 em Cloudflare Workers. O QR atual da V1 codifica `https://fotocordel.com.br/`; códigos antigos impressos devem ser testados após a migração.
+- Hospedagem estática em GitHub Pages, com domínio HTTPS validado e preview temporário da V1 em Cloudflare Workers. O QR atual da V1 codifica `https://fotocordel.com.br/`; códigos antigos impressos precisam de teste separado.
 
 ## Limites e conteúdo
 
